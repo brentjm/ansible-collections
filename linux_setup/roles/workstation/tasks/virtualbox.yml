@@ -1,0 +1,43 @@
+---
+- name: Install required packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    - gnupg2
+  become: true
+
+- name: Create directory for VirtualBox's GPG key
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Add VirtualBox GPG key
+  ansible.builtin.get_url:
+    url: {{ virtualbox_repo_deb_key }}
+    dest: /etc/apt/keyrings/virtualbox.gpg
+    mode: '0644'
+    force: true
+  become: true
+
+- name: Add VirtualBox repository
+  ansible.builtin.apt_repository:
+    repo: >-
+          deb [arch={{ server_architecture }}
+          signed-by=/etc/apt/keyrings/virtualbox.gpg]
+          {{ virtualbox_download }} {{ ansible_lsb.codename }} contrib
+    state: present
+  become: true
+
+- name: Install VirtualBox and related packages
+  ansible.builtin.apt:
+    name: "{{ virtualbox_edition }}"
+    state: present
+    update_cache: true
+  become: true
