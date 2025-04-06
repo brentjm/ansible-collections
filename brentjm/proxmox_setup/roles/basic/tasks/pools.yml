@@ -6,12 +6,13 @@
     creates: /mnt/vm_pool
   become: true
 
-- name: Create ZFS pool on /dev/sdb
-  ansible.builtin.command:
-    cmd: zpool create -f -m /mnt/data_pool data_pool /dev/sdb
-  args:
-    creates: /mnt/data_pool
-  become: true
+# Decided to use a single /ext4 for the large drive
+# - name: Create ZFS pool on /dev/sdb
+#   ansible.builtin.command:
+#     cmd: zpool create -f -m /mnt/data_pool data_pool /dev/sdb
+#   args:
+#     creates: /mnt/data_pool
+#   become: true
 
 - name: Debug pools variable
   ansible.builtin.debug:

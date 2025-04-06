@@ -2,5 +2,8 @@
 # - name: Setup ssh
 #   ansible.builtin.include_tasks: ssh.yml
 
-- name: Setup ZFS pools and datasets
+- name: Setup ZFS pool for VM and container storage
   ansible.builtin.include_tasks: pools.yml
+
+- name: Create a /ext4 filesystem for other storage
+  ansible.builtin.include_tasks: data.yml
