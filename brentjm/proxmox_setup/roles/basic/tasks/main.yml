@@ -1,0 +1,6 @@
+---
+# - name: Setup ssh
+#   ansible.builtin.include_tasks: ssh.yml
+
+- name: Setup ZFS pools and datasets
+  ansible.builtin.include_tasks: pools.yml

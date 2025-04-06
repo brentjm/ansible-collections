@@ -1,0 +1,20 @@
+---
+- name: Generate SSH key pair
+  ansible.builtin.command:
+    cmd: ssh-keygen -t rsa -b 4096 -C "brent_maranzano@yahoo.com" -f /root/.ssh/id_rsa -N ""
+  args:
+    creates: /root/.ssh/id_rsa
+  become: true
+
+- name: Copy SSH public key to Proxmox server
+  ansible.builtin.shell:
+    cmd: ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.68.62
+  register: ssh_copy_result
+  ignore_errors: true
+
+- name: Verify SSH access to Proxmox server
+  ansible.builtin.command:
+    cmd: ssh -o BatchMode=yes root@192.168.68.62 echo "SSH connection successful"
+  register: ssh_test_result
+  failed_when: ssh_test_result.rc != 0
+  ignore_errors: false

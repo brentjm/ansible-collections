@@ -1,0 +1,10 @@
+---
+- name: Delete Proxmox pools
+  hosts: proxmox_servers
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Delete Proxmox pools
+      ansible.builtin.include_role:
+        name: basic
+        tasks_from: delete_pools.yml
