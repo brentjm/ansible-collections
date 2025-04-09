@@ -38,9 +38,8 @@
     path: /etc/pve/storage.cfg
     line: |
       zfspool: {{ item.proxmox.id }}
-          pool {{ item.pool }}
-          content {{ item.proxmox.content }}
-          nodes proxmox-node1
+              pool {{ item.pool }}
+              content {{ item.proxmox.content }}
     insertafter: EOF
   become: true
   loop: "{{ pools | map(attribute='datasets') | flatten }}"

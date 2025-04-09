@@ -49,8 +49,7 @@
     path: /etc/pve/storage.cfg
     line: |
       dir: data_pool
-          path /mnt/data_pool
-          content images,iso,backup,vztmpl,snippets
-          nodes proxmox-node1
+              path /mnt/data_pool
+              content images,iso,backup,vztmpl,snippets
     insertafter: EOF
   become: true
