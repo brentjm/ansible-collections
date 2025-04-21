@@ -1,5 +1,14 @@
 # Proxmox Setup
 
+## Overview
+
+Setup the Proxmox server
+
+## Usage
+
+bash
+    ansible-playbook -i playbooks/inventory.ini playbooks/proxmox.yml
+
 ## Computer setup
 
 - 1 x 128 GB SSD for Proxmox
