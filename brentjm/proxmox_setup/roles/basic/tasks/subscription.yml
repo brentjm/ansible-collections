@@ -7,5 +7,5 @@
 - name: Change the subscription check to looking for not 'active'
   ansible.builtin.replace:
     path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-    regexp: "toLowerCase\(\) !== 'active'"
+    regexp: "toLowerCase\\(\\) !== 'active'"
     replace: "toLowerCase() === 'active'"

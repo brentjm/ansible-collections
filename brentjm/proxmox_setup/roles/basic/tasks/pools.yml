@@ -6,13 +6,12 @@
     creates: /mnt/vm_pool
   become: true
 
-# Decided to use a single /ext4 for the large drive
-# - name: Create ZFS pool on /dev/sdb
-#   ansible.builtin.command:
-#     cmd: zpool create -f -m /mnt/data_pool data_pool /dev/sdb
-#   args:
-#     creates: /mnt/data_pool
-#   become: true
+- name: Create ZFS pool on /dev/sdb
+  ansible.builtin.command:
+    cmd: zpool create -f -m /mnt/data_pool data_pool /dev/sdb
+  args:
+    creates: /mnt/data_pool
+  become: true
 
 - name: Debug pools variable
   ansible.builtin.debug:
@@ -33,13 +32,28 @@
   loop: "{{ pools | map(attribute='datasets') | flatten }}"
   when: item.quota is defined
 
-- name: Add ZFS datasets to Proxmox storage configuration
+- name: Check if storage.cfg backup exists
+  ansible.builtin.stat:
+    path: /etc/pve/storage.cfg.bak
+  register: backup_stat
+
+- name: Backup storage.cfg before modification
+  ansible.builtin.copy:
+    src: /etc/pve/storage.cfg
+    dest: /etc/pve/storage.cfg.bak
+    remote_src: yes
+  when: not backup_stat.stat.exists
+
+- name: Add ZFS dataset to Proxmox storage configuration
   ansible.builtin.lineinfile:
     path: /etc/pve/storage.cfg
     line: |
-      zfspool: {{ item.proxmox.id }}
-              pool {{ item.pool }}
+
+      dir: {{ item.proxmox.id }}
+              path {{ item.mountpoint }}
               content {{ item.proxmox.content }}
+              prune-backups keep-last=1
+              shared 0
     insertafter: EOF
   become: true
   loop: "{{ pools | map(attribute='datasets') | flatten }}"
