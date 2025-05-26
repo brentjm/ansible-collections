@@ -1,5 +1,10 @@
 # Ansible collections
 
+## Playbooks
+
+- [Linux setup Ansible collection](./brentjm/linux_setup/docs/toc.md)
+- [Proxmox setup Ansible collection](./brentjm/proxmox_setup/docs/toc.md)
+
 ## Install
 
 To install the Ansible collection, run the following command:
@@ -23,10 +28,7 @@ playbooks.
 first pass to set up SSH
 - Configure Portainer certificate
 
-## Table of Contents
-
-- [Linux setup Ansible collection](./brentjm/linux_setup/docs/toc.md)
-- [Proxmox setup Ansible collection](./brentjm/proxmox_setup/docs/toc.md)
+## Authors
 
 Brent Maranzano
 

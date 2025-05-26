@@ -1,6 +1,5 @@
 # Table of Contents
 
+- [About](./about.md)
 - [Setup](./setup.md)
 - [Create new VM](./create_vm.md)
-- [Ubuntu](./ubuntu.md)
-- [Home Assistant](./home_assistant.md)
