@@ -1,0 +1,14 @@
+---
+# Can't get this to work.
+# - name: Setup ssh
+#   ansible.builtin.include_tasks: ssh.yml
+
+- name: Setup ZFS pool for VM and container storage
+  ansible.builtin.include_tasks: pools.yml
+
+# This is if want to use simple /ext4 filesystem for other storage
+# - name: Create a /ext4 filesystem for other storage
+#   ansible.builtin.include_tasks: data.yml
+
+- name: Remove subscription banner
+  ansible.builtin.include_tasks: subscription.yml

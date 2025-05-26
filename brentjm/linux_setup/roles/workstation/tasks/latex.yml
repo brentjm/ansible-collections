@@ -1,0 +1,23 @@
+---
+- name: Install LaTeX packages
+  ansible.builtin.apt:
+    name: '{{ item }}'
+    state: present
+  loop:
+    - texlive
+    - texlive-latex-base
+    - texlive-latex-recommended
+    - texlive-latex-extra
+    - texlive-fonts-extra
+    - texlive-lang-english
+    - texlive-science
+    - texlive-pictures
+    - texlive-pstricks
+    - texlive-publishers
+    - texlive-xetex
+    - texlive-luatex
+    - texlive-bibtex-extra
+    - texlive-fonts-recommended
+    - texlive-fonts-extra
+    - texlive-fonts-extra
+  become: true

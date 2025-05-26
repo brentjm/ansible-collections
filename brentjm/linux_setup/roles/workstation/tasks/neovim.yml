@@ -1,0 +1,73 @@
+---
+#- name: Add Neovim ppa
+#  ansible.builtin.apt_repository:
+#    repo: deb https://ppa.launchpadcontent.net/neovim-ppa/stable/ubuntu
+#    repo: deb http://archive.canonical.com/ubuntu hardy partner
+#    state: present
+#
+
+- name: Install Neovim basic utils
+  ansible.builtin.apt:
+    pkg:
+      - git
+      - build-essential
+      - make
+      - unzip
+      - ripgrep
+      - xclip
+  become: true
+    
+- name: Install libfuse2 for AppImages # https://github.com/AppImage/AppImageKit/wiki/FUSE
+  ansible.builtin.apt:
+    name: libfuse2t64
+    state: present
+
+- name: Create AppImage directory
+  ansible.builtin.file:
+    path: /home/{{ username }}/bin
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: 'Add PATH=$PATH if does not exist'
+  lineinfile:
+    path: /home/{{ username }}/.bashrc
+    line: PATH="$PATH"
+    insertafter: EOF
+  when: lookup('file', '/home/brent/.bashrc') is not search('PATH=')
+  vars:
+    extra_path: /home/{{ username }}/bin
+
+- name: 'Add {{ extra_path }} to PATH'
+  lineinfile:
+    path: /home/{{ username }}/.bashrc
+    regexp: 'PATH=(["])((?!.*?{{ extra_path }}).*?)(["])$'
+    line: 'PATH=\1\2:{{ extra_path }}\3'
+    backrefs: yes
+  vars:
+    extra_path: /home/{{ username }}/bin
+
+- name: Install Neovim AppImage #https://github.com/neovim/neovim/blob/master/INSTALL.md
+  ansible.builtin.get_url:
+    url: "{{ url }}"
+    dest: /home/{{ username }}/bin
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0774'
+  vars:
+    url: https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+
+- name: Create symbolic link to app image
+  ansible.builtin.file:
+    src: /home/{{ username }}/bin/nvim.appimage
+    dest: /home/{{ username }}/bin/nvim
+    state: link
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Clone Neovim configuration
+  ansible.builtin.git:
+    repo: git@github.com:brentjm/Neovim.git
+    dest: /home/{{ username }}/.config/nvim

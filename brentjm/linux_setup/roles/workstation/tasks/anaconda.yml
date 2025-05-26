@@ -1,0 +1,14 @@
+---
+- name: Download Anaconda
+  ansible.builtin.get_url: 
+    url: '{{ anaconda_download_url }}'
+    dest: /home/{{ username }}/Downloads/anaconda.sh
+    checksum: '{{ anaconda_download_checksum }}'
+    mode: '0755'
+
+# Requires activating conda shell after installtion.
+# https://docs.anaconda.com/free/anaconda/install/silent-mode/
+- name: Install Anaconda
+  ansible.builtin.command: /home/{{ username }}/Downloads/anaconda.sh -b -p /home/{{ username }}/anaconda3
+  args:
+    creates: /home/{{ username }}/anaconda3

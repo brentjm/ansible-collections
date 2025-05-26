@@ -1,0 +1,16 @@
+---
+- name: Download nvm
+  ansible.builtin.get_url: 
+    url: '{{ nvm_download_url }}'
+    dest: /home/{{ username }}/Downloads/nvm.sh
+    mode: '0754'
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Execute nvm installer
+  ansible.builtin.shell: bash /home/{{ username }}/Downloads/nvm.sh
+
+- name: Install node LTS
+  ansible.builtin.shell: source /home/{{ username }}/.nvm/nvm.sh && nvm install --lts && nvm use --lts
+  args:
+    executable: /bin/bash

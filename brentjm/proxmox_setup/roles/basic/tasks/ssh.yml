@@ -1,0 +1,26 @@
+---
+- name: Check if SSH key exists
+  ansible.builtin.stat:
+    path: /home/brent/.ssh/id_rsa
+  register: ssh_key_stat
+
+- name: Generate SSH key pair
+  ansible.builtin.command:
+    cmd: ssh-keygen -t rsa -b 4096 -C "brent_maranzano@yahoo.com" -f /home/brent/.ssh/id_rsa -N ""
+  args:
+    creates: /home/brent/.ssh/id_rsa
+  become: true
+  when: not ssh_key_stat.stat.exists
+
+- name: Copy SSH public key to Proxmox server
+  ansible.builtin.shell:
+    cmd: ssh-copy-id -i /home/brent/.ssh/id_rsa.pub root@{{ ansible_host }}
+  register: ssh_copy_result
+  ignore_errors: true
+
+- name: Verify SSH access to Proxmox server
+  ansible.builtin.command:
+    cmd: ssh -o BatchMode=yes root@{{ ansible_host }} echo "SSH connection successful"
+  register: ssh_test_result
+  failed_when: ssh_test_result.rc != 0
+  ignore_errors: false

@@ -1,0 +1,23 @@
+---
+- name: Check if Plex Media Server is installed
+  ansible.builtin.shell: dpkg -l | grep plexmediaserver
+  register: plex_installed
+  ignore_errors: true
+
+- name: Copy Plex .deb file to remote machine
+  ansible.builtin.copy:
+    src: "{{ plex_deb_file }}"
+    dest: /tmp/plex.deb
+  when: plex_installed.rc != 0
+
+- name: Install Plex Media Server
+  apt:
+    deb: /tmp/plex.deb
+  when: plex_installed.rc != 0
+
+- name: Allow Plex Media Server port
+  ufw:
+    rule: allow
+    port: '32400'
+    proto: tcp
+

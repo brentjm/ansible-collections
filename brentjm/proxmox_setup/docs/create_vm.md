@@ -1,0 +1,21 @@
+# VM Installation
+
+- Upload the ISO to the Proxmox server (data_pool/iso)
+- Create a VM
+  - General Tab
+    - Select the VM name and ID
+    - Select 'start at boot'
+  - OS Tab
+    - Select the ISO image
+  - System Tab
+    - Select 'Qemu Agent'
+  - Disks Tab
+    - Select the disk size (minimum 32 GB)
+    - Select the storage location (vm_pool/vm_storage)
+  - CPU Tab
+    - Set minimum 2 cores
+  - Memory Tab
+    - Set minimum 4096 MB
+  - Network Tab
+    - Leave default unless you have special requirements (static, VLAN, etc)
+  - Confirm the settings

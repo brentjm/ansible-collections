@@ -1,0 +1,7 @@
+---
+- name: Allow Home Assistant port
+  ufw:
+    rule: allow
+    name: 'Home Assistant'
+    port: '8123'
+

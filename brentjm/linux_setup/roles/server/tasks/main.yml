@@ -1,0 +1,26 @@
+---
+# - name: Setup ssh
+#   ansible.builtin.include_tasks: ssh.yml
+
+- name: Install common apt packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - git
+  become: true
+
+# - name: Install Docker
+#   ansible.builtin.include_tasks: docker.yml
+#
+# - name: Install Portainer
+#   ansible.builtin.include_tasks: portainer.yml
+#
+# - name: Install Home Assistant
+#   ansible.builtin.include_tasks: ha.yml
+#
+# - name: Install Plex
+#   ansible.builtin.include_tasks: plex.yml
+#
+# - name: Setup UFW
+#   ansible.builtin.include_tasks: ufw.yml

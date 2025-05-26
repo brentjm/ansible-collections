@@ -1,0 +1,14 @@
+---
+- name: set the history editor to vi
+  ansible.builtin.lineinfile:
+    path: /home/{{ username }}/.bashrc
+    line: set -o vi
+    insertafter: EOF
+  when: lookup('file', '/home/brent/.bashrc') is not search ('set -o vi')
+
+- name: set FCEDIT for fc history editor to vi
+  ansible.builtin.lineinfile:
+    path: /home/{{ username }}/.bashrc
+    line: export FCEDIT=vi
+    insertafter: EOF
+  when: lookup('file', '/home/brent/.bashrc') is not search ('export FCEDIT=vi')

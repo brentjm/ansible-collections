@@ -1,0 +1,10 @@
+---
+username: brent
+server_architecture: amd64
+anaconda_download_url: "https://repo.anaconda.com/archive/Anaconda3-2024.02-1-Linux-x86_64.sh"
+anaconda_download_checksum: "sha256:c536ddb7b4ba738bddbd4e581b29308cb332fa12ae3fa2cd66814bd735dff231"
+nvm_download_url: "https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh"
+go_download_url: "https://go.dev/dl/go1.22.4.linux-amd64.tar.gz"
+virtualbox_repo_deb_key: "https://www.virtualbox.org/download/oracle_vbox_2016.asc"
+virtualbox_download: "https://download.virtualbox.org/virtualbox/debian"
+virtualbox_edition: "virtualbox-7.0.20"

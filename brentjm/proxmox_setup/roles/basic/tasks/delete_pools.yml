@@ -1,0 +1,41 @@
+---
+- name: Get a list of all ZFS pools
+  ansible.builtin.command:
+    cmd: zpool list -Ho name
+  register: zfs_pools
+  become: true
+
+- name: Get a list of all datasets for each pool
+  ansible.builtin.command:
+    cmd: zfs list -rHo name {{ item }}
+  loop: "{{ zfs_pools.stdout_lines }}"
+  register: zfs_datasets
+  become: true
+
+- name: Destroy all datasets in each pool
+  ansible.builtin.command:
+    cmd: zfs destroy -r {{ item }}
+  loop: "{{ zfs_datasets.results | map(attribute='stdout_lines') | flatten }}"
+  become: true
+  ignore_errors: true
+
+- name: Destroy all ZFS pools
+  ansible.builtin.command:
+    cmd: zpool destroy {{ item }}
+  loop: "{{ zfs_pools.stdout_lines }}"
+  become: true
+  ignore_errors: true
+
+- name: Delete all directories in /mnt
+  ansible.builtin.find:
+    paths: /mnt
+    file_type: directory
+    recurse: false
+  register: mnt_dirs
+
+- name: Remove all directories in /mnt
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ mnt_dirs.files }}"
+  become: true

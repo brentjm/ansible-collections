@@ -1,0 +1,5 @@
+---
+- name: Task to see debug message.
+  ansible.builtin.debug:
+    msg: "This is a task from workstation role/test."
+

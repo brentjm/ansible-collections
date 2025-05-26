@@ -1,0 +1,42 @@
+---
+- name: Install dotnet sdk
+  ansible.builtin.apt:
+    name: dotnet-sdk-8.0
+    state: present
+  become: true
+
+# Here below is the older Mono Project. Can now use dotnet sdk
+# https://stackoverflow.com/questions/37738106/net-core-vs-mono
+#- name: Install required packages
+#  ansible.builtin.apt:
+#    name: "{{ item }}"
+#    state: present
+#  with_items:
+#    - ca-certificates
+#    - gnupg2
+#  become: true
+#
+#- name: Get keys for repository # https://www.mono-project.com/download/stable/
+#  ansible.builtin.apt_key:
+#    keyserver: hkp://keyserver.ubuntu.com:80
+#    keyring: /usr/share/keyrings/mono-official-archive-keyring.gpg
+#    id: 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+#    state: present
+#  become: true
+#
+#  # TODO the disto name "focal" was hard-coded as mono project did not have one for "noble"
+#- name: Add mono repository
+#  ansible.builtin.apt_repository:
+#    repo: >-
+#          deb [arch={{ server_architecture }}
+#          signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg]
+#          https://download.mono-project.com/repo/ubuntu stable-focal main
+#    state: present
+#  become: true
+#
+#- name: Install mono-devel
+#  ansible.builtin.apt:
+#    name: mono-devel
+#    state: present
+#    update_cache: true
+#  become: true

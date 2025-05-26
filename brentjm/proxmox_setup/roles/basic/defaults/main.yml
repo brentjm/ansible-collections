@@ -1,0 +1,67 @@
+---
+pools:
+  - name: vm_pool
+    datasets:
+      - name: vm_storage
+        pool: vm_pool/vm_storage
+        mountpoint: /mnt/vm_pool/vm_storage
+        quota: 600G
+        proxmox:
+          enabled: true
+          content: images
+          id: vm_storage
+
+      - name: rootdir
+        pool: vm_pool/rootdir
+        mountpoint: /mnt/vm_pool/rootdir
+        quota: 200G
+        proxmox:
+          enabled: true
+          content: rootdir
+          id: rootdir_storage
+  - name: data_pool
+    datasets:
+      - name: iso
+        pool: data_pool/iso
+        mountpoint: /mnt/data_pool/iso
+        quota: 50G
+        proxmox:
+          enabled: true
+          content: iso
+          id: iso_storage
+
+      - name: vztmpl
+        pool: data_pool/vztmpl
+        mountpoint: /mnt/data_pool/vztmpl
+        quota: 50G
+        proxmox:
+          enabled: true
+          content: vztmpl
+          id: vztmpl_storage
+
+      - name: snippets
+        pool: data_pool/snippets
+        mountpoint: /mnt/data_pool/snippets
+        quota: 10G
+        proxmox:
+          enabled: true
+          content: snippets
+          id: snippets_storage
+
+      - name: backup
+        pool: data_pool/backup
+        mountpoint: /mnt/data_pool/backup
+        quota: 500G
+        proxmox:
+          enabled: true
+          content: backup
+          id: backup_storage
+
+      - name: general
+        pool: data_pool/general
+        mountpoint: /mnt/data_pool/general
+        quota: 1500G
+        proxmox:
+          enabled: true
+          content: none
+          id: general_storage

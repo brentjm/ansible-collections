@@ -1,0 +1,40 @@
+---
+- name: "Create font directory"
+  ansible.builtin.file:
+    path: /home/{{ username }}/.local/share/fonts
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: "Download NerdFont(s)"
+  ansible.builtin.get_url:
+    url: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip
+    dest: /home/{{ username }}/.local/share/fonts/Hack.zip
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0664'
+
+- name: Unzip NerdFont
+  ansible.builtin.unarchive:
+    src: "{{ item }}"
+    dest: "{{ font_dir }}/"
+    copy: no
+  with_fileglob:
+  - "{{ font_dir }}/*.zip"
+  vars:
+    font_dir: "/home/{{ username }}/.local/share/fonts"
+  
+- name: Update fonts
+  ansible.builtin.shell: fc-cache -f -v
+
+## This downloads all fonts - very large
+#- name: "Download NerdFont(s)"
+#  ansible.builtin.git:
+#    repo: https://github.com/ryanoasis/nerd-fonts.git
+#    dest: /home/{{ username }}/Downloads/nerdfonts
+#
+#- name: "Install NerdFont(s)"
+#  ansible.builtin.shell: ./install.sh Hack
+#  args:
+#    chdir: "/home/{{ username }}/Downloads/nerdfonts"

@@ -1,0 +1,55 @@
+---
+# - name: Partition the disk using fdisk
+#   ansible.builtin.shell: |
+#     echo -e "n\nn1\n\n\nw" | fdisk /dev/sdb
+#   args:
+#     creates: /dev/sdb1
+#   become: true
+
+- name: Check if /dev/sdb1 is formatted with ext4
+  ansible.builtin.command:
+    cmd: blkid -o value -s TYPE /dev/sdb1
+  register: blkid_output
+  failed_when: blkid_output.rc not in [0, 2]  # Allow exit code 2 if blkid doesn't find a file system
+  changed_when: false
+  become: true
+
+- name: Format the partition with ext4 if not already formatted
+  ansible.builtin.command:
+    cmd: mkfs.ext4 /dev/sdb1
+  when: blkid_output.stdout.strip() != "ext4"
+  become: true
+
+- name: Create mount point
+  ansible.builtin.file:
+    path: /mnt/data_pool
+    state: directory
+  become: true
+
+- name: Mount the file system
+  ansible.builtin.mount:
+    path: /mnt/data_pool
+    src: /dev/sdb1
+    fstype: ext4
+    opts: defaults
+    state: mounted
+  become: true
+
+- name: Ensure the file system is mounted on boot
+  ansible.builtin.mount:
+    path: /mnt/data_pool
+    src: /dev/sdb1
+    fstype: ext4
+    opts: defaults
+    state: present
+  become: true
+
+- name: Add directory-based storage to Proxmox
+  ansible.builtin.lineinfile:
+    path: /etc/pve/storage.cfg
+    line: |
+      dir: data_pool
+              path /mnt/data_pool
+              content images,iso,backup,vztmpl,snippets
+    insertafter: EOF
+  become: true

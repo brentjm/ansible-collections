@@ -1,0 +1,27 @@
+---
+- name: Install snap applications
+  community.general.snap:
+    name:
+      - inkscape
+      - gimp
+      - chromium
+      - gimp
+      - jq
+      - obs-studio
+      - spotify
+      - teams-for-linux
+      - youtube-dl
+      - webcamoid
+  become: true
+
+- name: Install VSCode
+  community.general.snap:
+    name: code
+    classic: true
+  become: true
+
+- name: Install Blender
+  community.general.snap:
+    name: blender
+    classic: true
+  become: true

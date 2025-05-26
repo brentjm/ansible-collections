@@ -1,0 +1,23 @@
+---
+- name: Download go
+  ansible.builtin.get_url: 
+    url: '{{ go_download_url }}'
+    dest: /home/{{ username }}/Downloads/go.tar.gz
+    mode: '0754'
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Untar go distribution
+  ansible.builtin.shell: tar -C /usr/local -xzf go.tar.gz
+  args:
+    chdir: /home/{{ username }}/Downloads/
+  become: true
+
+- name: 'Add go to PATH'
+  lineinfile:
+    path: /home/{{ username }}/.bashrc
+    regexp: 'PATH=(["])((?!.*?{{ extra_path }}).*?)(["])$'
+    line: 'PATH=\1\2:{{ extra_path }}\3'
+    backrefs: yes
+  vars:
+    extra_path: /usr/local/go/bin
