@@ -1,9 +1,8 @@
 ---
-- name: Setup workstation
+- name: Setup SSH key pair and distribute to hosts
   hosts: home_servers
   gather_facts: true
   roles:
     - ssh
-    - workstation
   vars_files:
     - vars/main.yml

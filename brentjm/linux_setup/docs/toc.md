@@ -15,8 +15,46 @@ playbook is focussed on setting up VMs and LXCs on a Linux server for home lab
 
 ## Workstation
 
-This playbook is intended to build a development station:
+This playbook is intended to build a development station. The order of installation
+is:
 
+- Install the OS on the local computer manually.
+- Use remote computer to run the Ansible playbook.
+  - Set the correct IP address in the `inventory` file ([linux_setup/playbooks/inventory.ini](../playbooks/inventory.ini)).
+
+    ```ini
+    [home_servers]
+    frigg ansible_host=192.168.68.52 ansible_user=brent ansible_ssh_private_key_file=/home/brent/.ssh/id_rsa
+    ```
+
+  - Create the Ansible Vault file with the SSH private key([linux_setup/roles/workstation/vars/vault.yml](../roles/ssh/vars/vault.yml)).
+
+    `vault.yml` file should look like this:
+
+    ```yaml
+      ansible_ssh_key_passphrase: your-secure-passphrase
+    ```
+
+    Then encrypt the file using Ansible Vault:
+
+    ```bash
+      ansible-vault encrypt roles/ssh/vars/vault.yml
+    ```
+
+### install Git related tools
+
+- Use package manager to install Git
+- Create ssh key pair
+  - This requires using Ansible Vault to store the private key
+
+### install Python related tools
+
+In particular need pylsp for Neovim LSP.
+
+- miniconda []
+
+
+### install other tools
 - Docker
 - Neovim
   - Use the Neovim repo for setting up LSP, ...
