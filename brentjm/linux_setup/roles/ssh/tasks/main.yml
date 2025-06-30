@@ -1,21 +1,11 @@
 ---
----
-- name: Generate SSH key pair on control machine
-  hosts: localhost
-  tasks:
-    - name: Create SSH key pair with passphrase
-      openssh_keypair:
-        path: ~/.ssh/id_rsa_ansible
-        type: rsa
-        size: 4096
-        state: present
-        passphrase: "{{ lookup('ansible.builtin.vault', 'ansible_ssh_key_passphrase') }}"
-
-- name: Distribute public key to inventory computers
-  hosts: all
-  tasks:
-    - name: Add public key to authorized_keys
-      authorized_key:
-        user: "{{ ansible_user }}"
-        state: present
-        key: "{{ lookup('file', '~/.ssh/id_rsa_ansible.pub') }}"
+- name: Create Ansible SSH key pair on control node
+  openssh_keypair:
+    path: ~/.ssh/id_rsa_ansible
+    type: rsa
+    size: 4096
+    state: present
+    passphrase: "{{ vault_ssh_key_passphrase }}"
+    force: true
+  delegate_to: localhost
+  run_once: true

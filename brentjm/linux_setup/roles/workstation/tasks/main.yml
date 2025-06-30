@@ -2,29 +2,25 @@
 - name: Install apt packages
   ansible.builtin.include_tasks: apt.yml
 
-- name: Setup bash
-  ansible.builtin.include_tasks: bash.yml
-
-- name: Include Neovim installation tasks
-  ansible.builtin.include_tasks: neovim.yml
-
-- name: Include NerdFont installation tasks
-  ansible.builtin.include_tasks: nerdfonts.yml
-
-- name: Include Docker installation
-  ansible.builtin.include_tasks: docker.yml
-
-# only useful if using ssh connection
-- name: Kill all user sessions
-  ansible.builtin.meta: reset_connection
+- name: Create directory for AppImages
+  ansible.builtin.include_tasks: appimage.yml
 
 - name: Install snaps
   ansible.builtin.include_tasks: snaps.yml
 
-- name: Install Anaconda
-  ansible.builtin.include_tasks: anaconda.yml
+- name: Include Docker installation
+  ansible.builtin.include_tasks: docker.yml
 
-- name: Install NodeJS
+# - name: Kill all user sessions
+#   ansible.builtin.meta: reset_connection
+
+- name: Install Conda
+  ansible.builtin.include_tasks: conda.yml
+
+- name: Include Neovim installation tasks
+  ansible.builtin.include_tasks: neovim.yml
+
+- name: Install Node.js
   ansible.builtin.include_tasks: nodejs.yml
 
 - name: Install Go
@@ -38,3 +34,10 @@
 
 - name: 'Install lazygit'
   ansible.builtin.include_tasks: lazygit.yml
+
+- name: Include NerdFont installation tasks
+  ansible.builtin.include_tasks: nerdfonts.yml
+
+- name: Setup bash
+  ansible.builtin.include_tasks: bash.yml
+

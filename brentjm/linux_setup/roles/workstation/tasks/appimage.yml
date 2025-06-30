@@ -1,0 +1,33 @@
+---
+- name: Install libfuse2 for AppImages # https://github.com/AppImage/AppImageKit/wiki/FUSE
+  ansible.builtin.apt:
+    name: libfuse2t64
+    state: present
+  become: true
+
+- name: Create AppImage directory
+  ansible.builtin.file:
+    path: /home/{{ username }}/bin
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: 'Add PATH=$PATH if does not exist'
+  lineinfile:
+    path: /home/{{ username }}/.bashrc
+    line: PATH="$PATH"
+    insertafter: EOF
+  when: lookup('file', '/home/brent/.bashrc') is not search('PATH=')
+  vars:
+    extra_path: /home/{{ username }}/bin
+
+- name: 'Add {{ extra_path }} to PATH'
+  lineinfile:
+    path: /home/{{ username }}/.bashrc
+    regexp: 'PATH=(["])((?!.*?{{ extra_path }}).*?)(["])$'
+    line: 'PATH=\1\2:{{ extra_path }}\3'
+    backrefs: yes
+  vars:
+    extra_path: /home/{{ username }}/bin
+

@@ -3,7 +3,7 @@
   hosts: home_servers
   gather_facts: true
   roles:
-    - ssh
+    # - ssh
     - workstation
   vars_files:
-    - vars/main.yml
+    # - ../roles/ssh/vars/vault.yml

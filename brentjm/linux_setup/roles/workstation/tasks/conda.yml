@@ -1,0 +1,36 @@
+---
+# https://www.anaconda.com/docs/getting-started/miniconda/install#quickstart-install-instructions
+- name: Create Miniconda installation directory
+  ansible.builtin.file:
+    path: /home/{{ username }}/miniconda3
+    state: directory
+    mode: '0755'
+
+- name: Download Miniconda installer
+  ansible.builtin.get_url:
+    url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    dest: /home/{{ username }}/miniconda3/miniconda.sh
+    checksum: '{{ miniconda_download_checksum }}'
+    mode: '0755'
+
+- name: Install Miniconda
+  ansible.builtin.command:
+    cmd: bash /home/{{ username }}/miniconda3/miniconda.sh -b -u -p /home/{{ username }}/miniconda3
+    creates: /home/{{ username }}/miniconda3/bin/conda
+
+- name: Remove Miniconda installer
+  ansible.builtin.file:
+    path: /home/{{ username }}/miniconda3/miniconda.sh
+    state: absent
+
+# Prefer to activate the shell manually.
+# - name: Activate Miniconda environment
+#   ansible.builtin.shell: |
+#     source /home/{{ username }}/miniconda3/bin/activate
+#   args:
+#     executable: /bin/bash
+
+# - name: Initialize Conda for all supported shells
+#   ansible.builtin.command:
+#     cmd: /home/{{ username }}/miniconda3/bin/conda init --all
+#     creates: /home/{{ username }}/.conda/environments.txt

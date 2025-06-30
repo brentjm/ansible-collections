@@ -1,16 +1,23 @@
 ---
-- name: Download nvm
-  ansible.builtin.get_url: 
-    url: '{{ nvm_download_url }}'
-    dest: /home/{{ username }}/Downloads/nvm.sh
-    mode: '0754'
-    owner: "{{ username }}"
-    group: "{{ username }}"
-
-- name: Execute nvm installer
-  ansible.builtin.shell: bash /home/{{ username }}/Downloads/nvm.sh
-
-- name: Install node LTS
-  ansible.builtin.shell: source /home/{{ username }}/.nvm/nvm.sh && nvm install --lts && nvm use --lts
+# https://docs.volta.sh/guide/getting-started
+- name: Install Volta
+  ansible.builtin.shell: |
+    curl {{ volta_download_url }} | bash
   args:
-    executable: /bin/bash
+    creates: ~/.volta/bin/volta
+
+- name: Ensure Volta is in PATH
+  ansible.builtin.lineinfile:
+    path: ~/.bashrc
+    line: 'export PATH=$HOME/.volta/bin:$PATH'
+    state: present
+
+- name: Install Node.js using Volta
+  ansible.builtin.command:
+    cmd: /home/{{ username }}/.volta/bin/volta install node@{{ node_version }}
+    creates: ~/.volta/tools/image/node/{{ node_version }}
+
+- name: Install Yarn using Volta
+  ansible.builtin.command:
+    cmd: /home/{{ username }}/.volta/bin/volta install yarn
+    creates: ~/.volta/tools/image/yarn

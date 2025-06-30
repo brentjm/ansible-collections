@@ -1,5 +1,8 @@
 ---
-- name: Install Git
-  package:
-    name: git
+- name: Install applications
+  ansible.builtin.package:
+    name:
+      - git
+      - sshpass
     state: present
+  become: true

@@ -1,4 +1,5 @@
 ---
+# https://www.virtualbox.org/wiki/Linux_Downloads
 - name: Install required packages
   ansible.builtin.apt:
     name: "{{ item }}"
@@ -37,7 +38,7 @@
 
 - name: Install VirtualBox and related packages
   ansible.builtin.apt:
-    name: "{{ virtualbox_edition }}"
+    name: virtualbox
     state: present
     update_cache: true
   become: true

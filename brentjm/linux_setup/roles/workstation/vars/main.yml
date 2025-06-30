@@ -1,10 +1,14 @@
 ---
 username: brent
 server_architecture: amd64
-anaconda_download_url: "https://repo.anaconda.com/archive/Anaconda3-2024.02-1-Linux-x86_64.sh"
-anaconda_download_checksum: "sha256:c536ddb7b4ba738bddbd4e581b29308cb332fa12ae3fa2cd66814bd735dff231"
+neovim_download_url: "https://github.com/neovim/neovim-releases/releases/download/v0.11.2/nvim-linux-x86_64.appimage"
+nerdfonts_download_url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip"
+miniconda_download_url: "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+miniconda_download_checksum: "sha256:ae15e3f987bdf93edfd6f9dd35b122c34ac72555822f80f5c7c8642595a13197"
 nvm_download_url: "https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh"
-go_download_url: "https://go.dev/dl/go1.22.4.linux-amd64.tar.gz"
+dotnet_version: "8.0"
+volta_download_url: "https://get.volta.sh"
+node_version: "22.5.1"
+go_download_url: "https://go.dev/dl/go1.24.4.linux-amd64.tar.gz"
 virtualbox_repo_deb_key: "https://www.virtualbox.org/download/oracle_vbox_2016.asc"
 virtualbox_download: "https://download.virtualbox.org/virtualbox/debian"
-virtualbox_edition: "virtualbox-7.0.20"

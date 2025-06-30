@@ -11,17 +11,13 @@
       - spotify
       - teams-for-linux
       - youtube-dl
-      - webcamoid
+      # - webcamoid
   become: true
 
 - name: Install VSCode
   community.general.snap:
-    name: code
-    classic: true
-  become: true
-
-- name: Install Blender
-  community.general.snap:
-    name: blender
+    name: 
+      - code
+      - blender
     classic: true
   become: true

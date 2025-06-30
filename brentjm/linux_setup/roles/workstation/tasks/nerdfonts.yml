@@ -9,7 +9,7 @@
 
 - name: "Download NerdFont(s)"
   ansible.builtin.get_url:
-    url: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip
+    url: "{{ nerdfonts_download_url }}"
     dest: /home/{{ username }}/.local/share/fonts/Hack.zip
     owner: "{{ username }}"
     group: "{{ username }}"

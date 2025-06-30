@@ -1,0 +1,28 @@
+---
+- name: Add Ansible public key to authorized_keys
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa_ansible.pub') }}"
+
+- name: Copy GitHub private key to host
+  ansible.builtin.copy:
+    src: ~/.ssh/id_ed25519_github
+    dest: /home/{{ ansible_user }}/.ssh/id_ed25519_github
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+
+- name: Add GitHub private key to SSH agent
+  ansible.builtin.shell: ssh-add ~/.ssh/id_ed25519_github
+  become_user: "{{ ansible_user }}"
+  ignore_errors: true
+
+- name: Start SSH agent if not running
+  ansible.builtin.shell: |
+    if [ -z "$SSH_AUTH_SOCK" ]; then
+      eval $(ssh-agent -s) > ~/.ssh-agent-env
+      source ~/.ssh-agent-env
+    fi
+  become_user: "{{ ansible_user }}"
+
