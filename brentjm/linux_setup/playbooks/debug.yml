@@ -1,0 +1,12 @@
+---
+- name: Debug tasks
+  hosts: home_servers
+  gather_facts: true
+  tasks:
+    - name: Include NerdFont tasks
+      ansible.builtin.include_tasks: ../roles/workstation/tasks/nerdfonts.yml
+      tags: nerdfonts
+      # apply:
+      #   tags: nerdfonts
+  vars_files:
+    ../roles/workstation/vars/main.yml

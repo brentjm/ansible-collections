@@ -49,11 +49,25 @@ the roles directories.
 
 ### Run the Ansible playbooks
 
+To run the playbook, use the following command from the control node (use the
+-vvv flag for verbose output):
+
 ```bash
 ansible-playbook playbooks/workstation.yml -i inventory.ini --ask-vault-pass --ask-pass --ask-become-pass
 ```
 
-To debug the playbook, you can run it with the `-vvv` option to get more verbose output:
+To help debug a task, first add a `tags` to the specific task in the playbook,
+then run the `debug` playbook with the `--tags` option.  For example:
+
+```yaml
+    - name: Update fonts
+      ansible.builtin.shell: fc-cache -f -v
+      tags: update_fonts
+```
+
+```bash
+ansible-playbook playbooks/debug.yml -i inventory.ini --tags "update_fonts"
+```
 
 ### install Git related tools
 

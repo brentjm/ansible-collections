@@ -4,5 +4,6 @@
     name:
       - git
       - sshpass
+      - cargo
     state: present
   become: true

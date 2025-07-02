@@ -17,14 +17,15 @@
 
 - name: Unzip NerdFont
   ansible.builtin.unarchive:
-    src: "{{ item }}"
-    dest: "{{ font_dir }}/"
-    copy: no
-  with_fileglob:
-  - "{{ font_dir }}/*.zip"
-  vars:
-    font_dir: "/home/{{ username }}/.local/share/fonts"
+    src: "/home/{{ username }}/.local/share/fonts/Hack.zip"
+    dest: "/home/{{ username }}/.local/share/fonts/"
+    remote_src: yes
   
+- name: Remove Hack.zip file
+  ansible.builtin.file:
+    path: "/home/{{ username }}/.local/share/fonts/Hack.zip"
+    state: absent
+
 - name: Update fonts
   ansible.builtin.shell: fc-cache -f -v
 
