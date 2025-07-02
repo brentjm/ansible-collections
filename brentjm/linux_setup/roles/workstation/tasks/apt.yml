@@ -5,5 +5,7 @@
       - git
       - sshpass
       - cargo
+      - python3-pip
+      - python3-venv
     state: present
   become: true
