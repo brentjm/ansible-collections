@@ -1,0 +1,30 @@
+---
+- name: Ensure flatpak is installed
+  ansible.builtin.package:
+    name: flatpak
+    state: present
+  become: true
+
+- name: Add Flathub flatpak repository for user
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    method: user
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+
+- name: Install KeePassXC via flatpak for user
+  community.general.flatpak:
+    name: org.keepassxc.KeePassXC
+    state: present
+    method: user
+
+- name: Unshare KeePassXC flatpak sandbox
+  ansible.builtin.command:
+    cmd: flatpak override --user --unshare=network,ipc,dbus org.keepassxc.KeePassXC
+  args:
+    warn: false
+
+- name: Confirm that the network sharing is disabled
+  ansible.builtin.command:
+    cmd: flatpak info --show-permissions org.keepassxc.KeePassXC
+  register: flatpak_info

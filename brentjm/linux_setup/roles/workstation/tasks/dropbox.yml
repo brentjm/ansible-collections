@@ -1,0 +1,7 @@
+---
+- name: Ensure python3-gpg is installed (required for Dropbox)
+  apt:
+    name: nautilus-dropbox, python3-gpg
+    state: present
+    update_cache: yes
+  become: true

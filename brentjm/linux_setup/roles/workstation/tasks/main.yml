@@ -41,3 +41,7 @@
 - name: Setup bash
   ansible.builtin.include_tasks: bash.yml
 
+# Note that this will create a GUI prompt for the user
+# to start Dropbox and log in.
+- name: Install Dropbox
+  ansible.builtin.include_tasks: dropbox.yml

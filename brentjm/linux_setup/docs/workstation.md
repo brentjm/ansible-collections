@@ -62,17 +62,16 @@ then run the `debug` playbook with the `--tags` option.  For example:
 ```yaml
     - name: Update fonts
       ansible.builtin.shell: fc-cache -f -v
-      tags: update_fonts
+      tags: debug
 ```
 
 ```bash
-ansible-playbook playbooks/debug.yml -i inventory.ini --tags "update_fonts"
+ansible-playbook playbooks/debug.yml -i inventory.ini --tags "debug"
 ```
 
-### install Git related tools
+### Post installation steps
 
-- Use package manager to install Git
-- Create ssh key pair
-  - This requires using Ansible Vault to store the private key
-
-### install Python related tools
+- The `nautilus-dropbox` pakckage will propt a dialog that will download and
+install the Dropbox client, and sign into the Dropbox account. Follow the
+instructions to complete the installation.
+- In Gnome settings, open online accounts and add your Google account.

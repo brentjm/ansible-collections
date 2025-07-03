@@ -1,12 +1,21 @@
 ---
+# - name: Debug tasks
+# - hosts: frigg
+#   tasks:
+#     - name: Ensure flatpak is installed
+#       ansible.builtin.package:
+#         name: flatpak
+#         state: present
+#       become: true
+
 - name: Debug tasks
   hosts: home_servers
   gather_facts: true
   tasks:
-    - name: Include NerdFont tasks
-      ansible.builtin.include_tasks: ../roles/workstation/tasks/nerdfonts.yml
-      tags: nerdfonts
+    - name: Debug
+      ansible.builtin.include_tasks: ../roles/workstation/tasks/dropbox.yml
+      # tags: debug
       # apply:
-      #   tags: nerdfonts
+      #   tags: debug
   vars_files:
     ../roles/workstation/vars/main.yml
