@@ -45,3 +45,6 @@
 # to start Dropbox and log in.
 - name: Install Dropbox
   ansible.builtin.include_tasks: dropbox.yml
+
+- name: Install IBKR Trader Workstation
+  ansible.builtin.include_tasks: ibkr_tws.yml
