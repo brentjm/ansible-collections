@@ -14,20 +14,20 @@
 # - name: Kill all user sessions
 #   ansible.builtin.meta: reset_connection
 
-- name: Install Conda
-  ansible.builtin.include_tasks: conda.yml
+- name: Install Node.js
+  ansible.builtin.include_tasks: nodejs.yml
 
 - name: Include Neovim installation tasks
   ansible.builtin.include_tasks: neovim.yml
-
-- name: Install Node.js
-  ansible.builtin.include_tasks: nodejs.yml
 
 - name: Install Go
   ansible.builtin.include_tasks: go.yml
 
 - name: 'Install C# .NET'
   ansible.builtin.include_tasks: csharp.yml
+
+- name: Install Conda
+  ansible.builtin.include_tasks: conda.yml
 
 - name: 'Install LaTeX'
   ansible.builtin.include_tasks: latex.yml
