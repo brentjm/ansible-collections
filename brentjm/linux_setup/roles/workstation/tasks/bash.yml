@@ -12,3 +12,10 @@
     line: export FCEDIT=vi
     insertafter: EOF
   when: lookup('file', '/home/brent/.bashrc') is not search ('export FCEDIT=vi')
+
+- name: add ~/.local/bin to PATH if not present
+  ansible.builtin.lineinfile:
+    path: /home/{{ username }}/.bashrc
+    line: 'export PATH="$HOME/.local/bin:$PATH"'
+    insertafter: EOF
+  when: lookup('file', '/home/brent/.bashrc') is not search ('export PATH="$HOME/.local/bin:$PATH"')
