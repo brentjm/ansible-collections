@@ -2,8 +2,14 @@
 - name: Allow SSH port
   ufw:
     rule: allow
-    port: '22'
+    name: OpenSSH
+
+- name: Allow TWS ports from Docker network
+  ufw:
+    rule: allow
+    port: 7496:7497
     proto: tcp
+    src: 172.0.0.0/8
 
 - name: Enable UFW
   ufw:

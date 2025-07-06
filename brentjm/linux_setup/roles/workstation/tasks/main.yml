@@ -48,3 +48,6 @@
 
 - name: Install IBKR Trader Workstation
   ansible.builtin.include_tasks: ibkr_tws.yml
+
+- name: Configure UFW
+  ansible.builtin.include_tasks: ufw.yml

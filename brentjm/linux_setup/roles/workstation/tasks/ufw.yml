@@ -1,0 +1,9 @@
+---
+- name: Allow SSH port
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Enable UFW
+  ufw:
+    state: enabled
