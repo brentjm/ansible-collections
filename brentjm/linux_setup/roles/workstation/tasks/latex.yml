@@ -21,3 +21,9 @@
     - texlive-fonts-extra
     - texlive-fonts-extra
   become: true
+
+- name: Install latexmk
+  ansible.builtin.apt:
+    name: latexmk
+    state: present
+  become: true
