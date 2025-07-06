@@ -1,6 +1,6 @@
 ---
-- name: Install tree-sitter-cli globally with npm
-  npm:
-    name: tree-sitter-cli
-    global: yes
-    state: present
+- name: Install tree-sitter-cli globally with volta
+  shell: |
+    source $HOME/.volta/bin/volta && volta install tree-sitter-cli
+  args:
+    creates: "{{ ansible_env.HOME }}/.volta/tools/image/packages/tree-sitter-cli"

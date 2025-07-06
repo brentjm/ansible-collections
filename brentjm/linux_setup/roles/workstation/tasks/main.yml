@@ -17,6 +17,9 @@
 - name: Install Node.js
   ansible.builtin.include_tasks: nodejs.yml
 
+- name: Install global Node.js tools
+  ansible.builtin.include_tasks: nodejs_global_tools.yml
+
 - name: Include Neovim installation tasks
   ansible.builtin.include_tasks: neovim.yml
 
