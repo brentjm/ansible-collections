@@ -1,0 +1,6 @@
+---
+- name: Install tree-sitter-cli globally with npm
+  npm:
+    name: tree-sitter-cli
+    global: yes
+    state: present
