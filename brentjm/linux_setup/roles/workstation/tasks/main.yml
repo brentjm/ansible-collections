@@ -14,20 +14,23 @@
 # - name: Kill all user sessions
 #   ansible.builtin.meta: reset_connection
 
-- name: Install Conda
-  ansible.builtin.include_tasks: conda.yml
+- name: Install Node.js
+  ansible.builtin.include_tasks: nodejs.yml
+
+- name: Install global Node.js tools
+  ansible.builtin.include_tasks: nodejs_global_tools.yml
 
 - name: Include Neovim installation tasks
   ansible.builtin.include_tasks: neovim.yml
-
-- name: Install Node.js
-  ansible.builtin.include_tasks: nodejs.yml
 
 - name: Install Go
   ansible.builtin.include_tasks: go.yml
 
 - name: 'Install C# .NET'
   ansible.builtin.include_tasks: csharp.yml
+
+- name: Install Conda
+  ansible.builtin.include_tasks: conda.yml
 
 - name: 'Install LaTeX'
   ansible.builtin.include_tasks: latex.yml
@@ -48,3 +51,9 @@
 
 - name: Install IBKR Trader Workstation
   ansible.builtin.include_tasks: ibkr_tws.yml
+
+- name: Configure UFW
+  ansible.builtin.include_tasks: ufw.yml
+
+- name: Install Signal Desktop
+  ansible.builtin.include_tasks: signal.yml

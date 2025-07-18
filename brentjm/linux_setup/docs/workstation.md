@@ -69,6 +69,12 @@ then run the `debug` playbook with the `--tags` option.  For example:
 ansible-playbook playbooks/debug.yml -i inventory.ini --tags "debug"
 ```
 
+To run the playbook on the workstation itself, use the following command
+
+```bash
+ansible-playbook playbooks/workstation.yml -i localhost, --connection=local --ask-vault-pass --ask-become-pass
+```
+
 ### Post installation steps
 
 - The `nautilus-dropbox` pakckage will propt a dialog that will download and

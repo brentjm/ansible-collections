@@ -1,0 +1,16 @@
+---
+- name: Add Signal repository key
+  ansible.builtin.apt_key:
+    url: https://updates.signal.org/desktop/apt/keys.asc
+    state: present
+
+- name: Add Signal repository
+  ansible.builtin.apt_repository:
+    repo: 'deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main'
+    state: present
+
+- name: Install Signal Desktop
+  ansible.builtin.apt:
+    name: signal-desktop
+    state: present
+    update_cache: yes
