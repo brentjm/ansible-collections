@@ -54,3 +54,6 @@
 
 - name: Configure UFW
   ansible.builtin.include_tasks: ufw.yml
+
+- name: Install Signal Desktop
+  ansible.builtin.include_tasks: signal.yml
