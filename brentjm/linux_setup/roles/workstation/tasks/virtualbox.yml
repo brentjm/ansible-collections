@@ -30,7 +30,7 @@
 - name: Add VirtualBox repository
   ansible.builtin.apt_repository:
     repo: >-
-          deb [arch={{ server_architecture }}
+          deb [arch={{ workstation_architecture }}
           signed-by=/etc/apt/keyrings/virtualbox.asc]
           {{ virtualbox_download }} {{ ansible_lsb.codename }} contrib
     state: present

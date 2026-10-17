@@ -1,7 +1,13 @@
 ---
 - name: Set timezone (trading cron runs on local market time)
   community.general.timezone:
-    name: "{{ server_timezone }}"
+    name: "{{ base_timezone }}"
+  become: true
+
+- name: Read LVM facts (needs root)
+  ansible.builtin.setup:
+    gather_subset: hardware
+    filter: ansible_lvm
   become: true
 
 - name: Grow root LV to use all free space in ubuntu-vg
@@ -25,7 +31,7 @@
 
 - name: Install base packages
   ansible.builtin.apt:
-    name: "{{ server_base_packages }}"
+    name: "{{ base_packages }}"
     state: present
   become: true
 
@@ -41,8 +47,8 @@
 - name: Check whether a reboot is required
   ansible.builtin.stat:
     path: /var/run/reboot-required
-  register: reboot_required
+  register: base_reboot_required
 
 - name: Report reboot status
   ansible.builtin.debug:
-    msg: "Reboot required: {{ reboot_required.stat.exists }} (reboot by hand: sudo reboot)"
+    msg: "Reboot required: {{ base_reboot_required.stat.exists }} (reboot by hand: sudo reboot)"

@@ -5,13 +5,6 @@
     name: OpenSSH
   become: true
 
-- name: Allow all traffic on the Tailscale interface
-  community.general.ufw:
-    rule: allow
-    interface: tailscale0
-    direction: in
-  become: true
-
 - name: Enable UFW (deny incoming by default)
   community.general.ufw:
     state: enabled

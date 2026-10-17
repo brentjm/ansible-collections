@@ -1,0 +1,5 @@
+---
+# Settings shared by every machine. Role defaults (roles/*/defaults/main.yml)
+# hold everything else; override them here or in group_vars/<group>.yml.
+username: brent
+base_timezone: America/New_York  # trading cron runs on market time

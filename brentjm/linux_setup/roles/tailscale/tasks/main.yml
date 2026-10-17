@@ -31,4 +31,11 @@
 
 - name: Next step (manual)
   ansible.builtin.debug:
-    msg: "Run on frigg: sudo tailscale up  (then open the printed URL to approve)"
+    msg: "Run on {{ inventory_hostname }}: sudo tailscale up  (then open the printed URL to approve)"
+
+- name: Allow all traffic on the Tailscale interface
+  community.general.ufw:
+    rule: allow
+    interface: tailscale0
+    direction: in
+  become: true

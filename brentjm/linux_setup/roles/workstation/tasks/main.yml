@@ -1,59 +1,65 @@
 ---
+# Each step has a tag: run one with --tags <tag>, skip with --skip-tags <tag>.
 - name: Install apt packages
-  ansible.builtin.include_tasks: apt.yml
+  ansible.builtin.import_tasks: apt.yml
+  tags: apt
 
 - name: Create directory for AppImages
-  ansible.builtin.include_tasks: appimage.yml
+  ansible.builtin.import_tasks: appimage.yml
+  tags: appimage
 
 - name: Install snaps
-  ansible.builtin.include_tasks: snaps.yml
-
-- name: Include Docker installation
-  ansible.builtin.include_tasks: docker.yml
-
-# - name: Kill all user sessions
-#   ansible.builtin.meta: reset_connection
+  ansible.builtin.import_tasks: snaps.yml
+  tags: snaps
 
 - name: Install Node.js
-  ansible.builtin.include_tasks: nodejs.yml
+  ansible.builtin.import_tasks: nodejs.yml
+  tags: nodejs
 
 - name: Install global Node.js tools
-  ansible.builtin.include_tasks: nodejs_global_tools.yml
+  ansible.builtin.import_tasks: nodejs_global_tools.yml
+  tags: nodejs
 
-- name: Include Neovim installation tasks
-  ansible.builtin.include_tasks: neovim.yml
+- name: Install Neovim
+  ansible.builtin.import_tasks: neovim.yml
+  tags: neovim
 
 - name: Install Go
-  ansible.builtin.include_tasks: go.yml
+  ansible.builtin.import_tasks: go.yml
+  tags: go
 
-- name: 'Install C# .NET'
-  ansible.builtin.include_tasks: csharp.yml
+- name: Install C# .NET
+  ansible.builtin.import_tasks: csharp.yml
+  tags: csharp
 
 - name: Install Conda
-  ansible.builtin.include_tasks: conda.yml
+  ansible.builtin.import_tasks: conda.yml
+  tags: conda
 
-- name: 'Install LaTeX'
-  ansible.builtin.include_tasks: latex.yml
+- name: Install LaTeX
+  ansible.builtin.import_tasks: latex.yml
+  tags: latex
 
-- name: 'Install lazygit'
-  ansible.builtin.include_tasks: lazygit.yml
+- name: Install lazygit
+  ansible.builtin.import_tasks: lazygit.yml
+  tags: lazygit
 
-- name: Include NerdFont installation tasks
-  ansible.builtin.include_tasks: nerdfonts.yml
+- name: Install Nerd Fonts
+  ansible.builtin.import_tasks: nerdfonts.yml
+  tags: nerdfonts
 
-- name: Setup bash
-  ansible.builtin.include_tasks: bash.yml
+- name: Set up bash
+  ansible.builtin.import_tasks: bash.yml
+  tags: bash
 
-# Note that this will create a GUI prompt for the user
-# to start Dropbox and log in.
 - name: Install Dropbox
-  ansible.builtin.include_tasks: dropbox.yml
+  ansible.builtin.import_tasks: dropbox.yml
+  tags: dropbox
 
 - name: Install IBKR Trader Workstation
-  ansible.builtin.include_tasks: ibkr_tws.yml
-
-- name: Configure UFW
-  ansible.builtin.include_tasks: ufw.yml
+  ansible.builtin.import_tasks: ibkr_tws.yml
+  tags: ibkr_tws
 
 - name: Install Signal Desktop
-  ansible.builtin.include_tasks: signal.yml
+  ansible.builtin.import_tasks: signal.yml
+  tags: signal

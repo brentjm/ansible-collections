@@ -1,6 +1,12 @@
 ---
+# Development workstation (Ubuntu Desktop 26.04). Run one part with --tags <tag>;
+# tags are listed in roles/workstation/tasks/main.yml.
 - name: Setup workstation
   hosts: workstations
   gather_facts: true
   roles:
-    - workstation
+    - role: docker
+      tags: docker
+    - role: firewall
+      tags: firewall
+    - role: workstation

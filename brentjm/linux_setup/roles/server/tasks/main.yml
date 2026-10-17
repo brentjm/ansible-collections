@@ -1,7 +1,4 @@
 ---
-# - name: Setup ssh
-#   ansible.builtin.include_tasks: ssh.yml
-
 - name: Install common apt packages
   ansible.builtin.apt:
     name: "{{ item }}"
@@ -10,8 +7,7 @@
     - git
   become: true
 
-# - name: Install Docker
-#   ansible.builtin.include_tasks: docker.yml
+# Docker: add `- role: docker` to playbooks/server.yml instead.
 #
 # - name: Install Portainer
 #   ansible.builtin.include_tasks: portainer.yml

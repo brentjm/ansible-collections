@@ -1,0 +1,9 @@
+---
+base_timezone: Etc/UTC  # set per site in group_vars/all.yml
+base_packages:
+  - git
+  - curl
+  - tmux
+  - htop
+  - unattended-upgrades
+  - ufw

@@ -1,35 +1,17 @@
 ---
-# Set up frigg as the dedicated trading box (Ubuntu Server 26.04 LTS).
-# Run: ansible-playbook -i inventory.ini playbooks/trading_server.yml --ask-become-pass
-# The trader container and its cron are moved separately (cutover from odin).
+# frigg: trading container + Claude Code. Run one part with --tags <tag>.
 - name: Configure trading server
   hosts: trading
   gather_facts: true
-  become: true
-  tasks:
-    - name: Base system (timezone, disk, updates, packages)
-      ansible.builtin.include_role:
-        name: server
-        tasks_from: base.yml
-
-    - name: Docker
-      ansible.builtin.include_role:
-        name: server
-        tasks_from: docker.yml
-
-    # Tailscale skipped 2026-10-16: Claude Remote Control needs no inbound access.
-    # Enable for SSH from outside the house.
-    # - name: Tailscale
-    #   ansible.builtin.include_role:
-    #     name: server
-    #     tasks_from: tailscale.yml
-
-    - name: Firewall
-      ansible.builtin.include_role:
-        name: server
-        tasks_from: firewall.yml
-
-    - name: Claude Code
-      ansible.builtin.include_role:
-        name: server
-        tasks_from: claude_code.yml
+  roles:
+    - role: base
+      tags: base
+    - role: docker
+      tags: docker
+    # Tailscale not used on frigg (2026-10-16): Claude Remote Control needs no inbound access.
+    # - role: tailscale
+    #   tags: tailscale
+    - role: firewall
+      tags: firewall
+    - role: claude_code
+      tags: claude_code

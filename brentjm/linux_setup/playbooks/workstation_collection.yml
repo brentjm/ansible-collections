@@ -1,9 +1,0 @@
----
-- name: Test new role from within this playbook
-  hosts: localhost
-  gather_facts: true
-  tasks:
-    - name: Testing role
-      ansible.builtin.include_role:
-        name: brentjm.linux_setup.workstation
-        tasks_from: main.yml
