@@ -1,0 +1,14 @@
+# Throwaway Ubuntu 26.04 VM for testing the playbooks before running them on
+# frigg or odin. See docs/testing.md.
+Vagrant.configure("2") do |config|
+  config.vm.define "testbox" do |box|
+    box.vm.box = "bento/ubuntu-26.04"
+    box.vm.hostname = "testbox"
+    box.vm.network "forwarded_port", guest: 22, host: 2299, id: "ssh"
+    box.vm.synced_folder ".", "/vagrant", disabled: true
+    box.vm.provider "virtualbox" do |vb|
+      vb.memory = 4096
+      vb.cpus = 2
+    end
+  end
+end
