@@ -32,7 +32,7 @@
     repo: >-
           deb [arch={{ workstation_architecture }}
           signed-by=/etc/apt/keyrings/virtualbox.asc]
-          {{ virtualbox_download }} {{ ansible_lsb.codename }} contrib
+          {{ virtualbox_download }} {{ ansible_facts['distribution_release'] }} contrib
     state: present
   become: true
 

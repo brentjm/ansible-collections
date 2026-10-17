@@ -18,9 +18,9 @@
     resizefs: true
   become: true
   when:
-    - ansible_lvm is defined
-    - ansible_lvm.vgs['ubuntu-vg'] is defined
-    - ansible_lvm.vgs['ubuntu-vg'].free_g | float > 1
+    - ansible_facts['lvm'] is mapping
+    - ansible_facts['lvm']['vgs']['ubuntu-vg'] is defined
+    - ansible_facts['lvm']['vgs']['ubuntu-vg']['free_g'] | float > 1
 
 - name: Upgrade all packages
   ansible.builtin.apt:

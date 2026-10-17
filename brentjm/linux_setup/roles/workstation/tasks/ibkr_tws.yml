@@ -2,18 +2,18 @@
 - name: Download Trader Workstation installer
   ansible.builtin.get_url:
     url: "{{ ibkr_tws_download_url }}"
-    dest: "{{ ansible_env.HOME }}/Downloads/tws-latest-linux-x64.sh"
+    dest: "{{ ansible_facts['env']['HOME'] }}/Downloads/tws-latest-linux-x64.sh"
     mode: '0755'
 
 - name: Make installer executable
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/Downloads/tws-latest-linux-x64.sh"
+    path: "{{ ansible_facts['env']['HOME'] }}/Downloads/tws-latest-linux-x64.sh"
     mode: '0755'
 
 - name: Run Trader Workstation installer
   ansible.builtin.command:
     cmd: "./tws-latest-linux-x64.sh -q"  # -q: unattended; without it the installer waits for input
-    chdir: "{{ ansible_env.HOME }}/Downloads"
+    chdir: "{{ ansible_facts['env']['HOME'] }}/Downloads"
   become: false
   args:
-    creates: "{{ ansible_env.HOME }}/Jts"
+    creates: "{{ ansible_facts['env']['HOME'] }}/Jts"

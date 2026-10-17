@@ -67,7 +67,7 @@ case "${1:-}" in
     running || { echo "Not running"; exit 0; }
     kill "$(cat "$PID")"; rm -f "$PID"; echo "Stopped" ;;
   destroy)
-    "$0" down
+    "./$(basename "$0")" down
     rm -f "$DISK" "$SEED" $STATE/user-data $STATE/meta-data
     echo "Deleted the VM disk (downloaded image kept in $STATE)" ;;
   status) running && echo "Running (ssh port $PORT)" || echo "Stopped" ;;
