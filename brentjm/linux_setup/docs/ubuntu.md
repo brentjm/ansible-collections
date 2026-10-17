@@ -1,5 +1,5 @@
-# Ubutnu 24.04
+# Ubuntu 26.04 LTS
 
-default installation
-
-See: Linux Setup Ansible playbook for configuration
+- frigg: Ubuntu Server 26.04.1, default installation (whole disk, LVM, OpenSSH server, no snaps).
+  Configure with `playbooks/trading_server.yml` (see [trading_server.md](trading_server.md)).
+- Workstations: Ubuntu Desktop 26.04, then `playbooks/workstation.yml`.

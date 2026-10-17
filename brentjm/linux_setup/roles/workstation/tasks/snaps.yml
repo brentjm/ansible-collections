@@ -5,7 +5,6 @@
       - inkscape
       - gimp
       - chromium
-      - gimp
       - jq
       - obs-studio
       - spotify
@@ -15,9 +14,9 @@
       # - webcamoid
   become: true
 
-- name: Install VSCode
+- name: Install classic snaps (VS Code, Blender)
   community.general.snap:
-    name: 
+    name:
       - code
       - blender
     classic: true

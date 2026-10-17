@@ -1,9 +1,11 @@
 ---
 - name: Allow SSH port
-  ufw:
+  community.general.ufw:
     rule: allow
     name: OpenSSH
+  become: true
 
 - name: Enable UFW
-  ufw:
+  community.general.ufw:
     state: enabled
+  become: true

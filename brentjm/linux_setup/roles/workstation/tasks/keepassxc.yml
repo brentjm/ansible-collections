@@ -21,10 +21,9 @@
 - name: Unshare KeePassXC flatpak sandbox
   ansible.builtin.command:
     cmd: flatpak override --user --unshare=network,ipc,dbus org.keepassxc.KeePassXC
-  args:
-    warn: false
 
 - name: Confirm that the network sharing is disabled
   ansible.builtin.command:
     cmd: flatpak info --show-permissions org.keepassxc.KeePassXC
   register: flatpak_info
+  changed_when: false

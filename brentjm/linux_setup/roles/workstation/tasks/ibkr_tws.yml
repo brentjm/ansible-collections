@@ -12,7 +12,7 @@
 
 - name: Run Trader Workstation installer
   ansible.builtin.command:
-    cmd: "./tws-latest-linux-x64.sh"
+    cmd: "./tws-latest-linux-x64.sh -q"  # -q: unattended; without it the installer waits for input
     chdir: "{{ ansible_env.HOME }}/Downloads"
   become: false
   args:

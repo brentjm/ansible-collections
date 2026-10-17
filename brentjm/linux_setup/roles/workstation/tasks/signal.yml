@@ -1,16 +1,26 @@
 ---
-- name: Add Signal repository key
-  ansible.builtin.apt_key:
+# https://signal.org/download/linux/ — keyring + deb822 sources file
+- name: Download Signal repository key
+  ansible.builtin.get_url:
     url: https://updates.signal.org/desktop/apt/keys.asc
-    state: present
+    dest: /etc/apt/keyrings/signal-desktop.asc
+    mode: '0644'
+  become: true
 
 - name: Add Signal repository
-  ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main'
-    state: present
+  ansible.builtin.deb822_repository:
+    name: signal-desktop
+    types: deb
+    uris: https://updates.signal.org/desktop/apt
+    suites: xenial
+    components: main
+    architectures: amd64
+    signed_by: /etc/apt/keyrings/signal-desktop.asc
+  become: true
 
 - name: Install Signal Desktop
   ansible.builtin.apt:
     name: signal-desktop
     state: present
-    update_cache: yes
+    update_cache: true
+  become: true

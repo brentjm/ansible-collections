@@ -21,8 +21,8 @@
 
 - name: Add VirtualBox GPG key
   ansible.builtin.get_url:
-    url: {{ virtualbox_repo_deb_key }}
-    dest: /etc/apt/keyrings/virtualbox.gpg
+    url: "{{ virtualbox_repo_deb_key }}"
+    dest: /etc/apt/keyrings/virtualbox.asc
     mode: '0644'
     force: true
   become: true
@@ -31,7 +31,7 @@
   ansible.builtin.apt_repository:
     repo: >-
           deb [arch={{ server_architecture }}
-          signed-by=/etc/apt/keyrings/virtualbox.gpg]
+          signed-by=/etc/apt/keyrings/virtualbox.asc]
           {{ virtualbox_download }} {{ ansible_lsb.codename }} contrib
     state: present
   become: true

@@ -19,15 +19,16 @@
   ansible.builtin.unarchive:
     src: "/home/{{ username }}/.local/share/fonts/Hack.zip"
     dest: "/home/{{ username }}/.local/share/fonts/"
-    remote_src: yes
-  
+    remote_src: true
+
 - name: Remove Hack.zip file
   ansible.builtin.file:
     path: "/home/{{ username }}/.local/share/fonts/Hack.zip"
     state: absent
 
 - name: Update fonts
-  ansible.builtin.shell: fc-cache -f -v
+  ansible.builtin.command: fc-cache -f
+  changed_when: false
 
 ## This downloads all fonts - very large
 #- name: "Download NerdFont(s)"

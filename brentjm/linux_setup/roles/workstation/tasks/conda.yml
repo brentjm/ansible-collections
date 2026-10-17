@@ -6,12 +6,19 @@
     state: directory
     mode: '0755'
 
+# No fixed checksum: the "latest" installer changes with each Miniconda release,
+# so a pinned hash fails. Pin a versioned URL plus its hash if verification is wanted.
+- name: Check whether conda is installed
+  ansible.builtin.stat:
+    path: /home/{{ username }}/miniconda3/bin/conda
+  register: conda_bin
+
 - name: Download Miniconda installer
   ansible.builtin.get_url:
-    url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    url: "{{ miniconda_download_url }}"
     dest: /home/{{ username }}/miniconda3/miniconda.sh
-    checksum: '{{ miniconda_download_checksum }}'
     mode: '0755'
+  when: not conda_bin.stat.exists
 
 - name: Install Miniconda
   ansible.builtin.command:
@@ -24,12 +31,6 @@
     state: absent
 
 # Prefer to activate the shell manually.
-# - name: Activate Miniconda environment
-#   ansible.builtin.shell: |
-#     source /home/{{ username }}/miniconda3/bin/activate
-#   args:
-#     executable: /bin/bash
-
 # - name: Initialize Conda for all supported shells
 #   ansible.builtin.command:
 #     cmd: /home/{{ username }}/miniconda3/bin/conda init --all

@@ -13,21 +13,8 @@
     group: "{{ username }}"
     mode: '0755'
 
-- name: 'Add PATH=$PATH if does not exist'
-  lineinfile:
+# lineinfile is idempotent; it reads the target's .bashrc (a file lookup would read the control node's)
+- name: Add ~/bin to PATH
+  ansible.builtin.lineinfile:
     path: /home/{{ username }}/.bashrc
-    line: PATH="$PATH"
-    insertafter: EOF
-  when: lookup('file', '/home/brent/.bashrc') is not search('PATH=')
-  vars:
-    extra_path: /home/{{ username }}/bin
-
-- name: 'Add {{ extra_path }} to PATH'
-  lineinfile:
-    path: /home/{{ username }}/.bashrc
-    regexp: 'PATH=(["])((?!.*?{{ extra_path }}).*?)(["])$'
-    line: 'PATH=\1\2:{{ extra_path }}\3'
-    backrefs: yes
-  vars:
-    extra_path: /home/{{ username }}/bin
-
+    line: 'export PATH="$HOME/bin:$PATH"'

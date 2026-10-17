@@ -1,15 +1,13 @@
 ---
 username: brent
 server_architecture: amd64
-neovim_download_url: "https://github.com/neovim/neovim-releases/releases/download/v0.11.2/nvim-linux-x86_64.appimage"
-nerdfonts_download_url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip"
+neovim_download_url: "https://github.com/neovim/neovim/releases/download/v0.12.6/nvim-linux-x86_64.appimage"
+nerdfonts_download_url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/Hack.zip"
 miniconda_download_url: "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-miniconda_download_checksum: "sha256:ae15e3f987bdf93edfd6f9dd35b122c34ac72555822f80f5c7c8642595a13197"
-nvm_download_url: "https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh"
-dotnet_version: "8.0"
+dotnet_version: "10.0"  # 8.0 is not in the Ubuntu 26.04 archive
 volta_download_url: "https://get.volta.sh"
-node_version: "22.5.1"
-go_download_url: "https://go.dev/dl/go1.24.4.linux-amd64.tar.gz"
+node_version: "24.22.0"  # LTS, 2026-10-16
+go_version: "go1.27.2"
 virtualbox_repo_deb_key: "https://www.virtualbox.org/download/oracle_vbox_2016.asc"
 virtualbox_download: "https://download.virtualbox.org/virtualbox/debian"
 dropbox_deb_url: "https://www.dropbox.com/download?dl=packages/ubuntu/dropbox_2025.05.20_amd64.deb"

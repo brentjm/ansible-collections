@@ -11,6 +11,8 @@ for individual use. Typical applications include:
 - Virtualization (VirtualBox, Vagrant, etc.)
 - Other tools (LaTeX, Obsidian, etc.)
 
+**Targets Ubuntu 26.04.** Some packages (apt `lazygit`, `dotnet-sdk-10.0`, `libfuse2t64`) are not in 22.04, so run this on odin only after its upgrade.
+
 ## Getting Started
 
 ### Pre-work steps on the workstation
@@ -31,12 +33,18 @@ to set up the workstation.
 
 #### Check inventory file
 
-Set the correct IP address in the `inventory` file
-([linux_setup/playbooks/inventory.ini](../playbooks/inventory.ini)).
+Check the groups in the inventory file
+([linux_setup/inventory.ini](../inventory.ini)). Each playbook targets one group:
 
   ```ini
-  [home_servers]
-  frigg ansible_host=192.168.68.64 ansible_user=brent ansible_ssh_private_key_file=/home/brent/.ssh/id_rsa_ansible
+  [trading]        # trading_server.yml only
+  frigg ansible_host=192.168.68.55 ansible_user=brent ansible_ssh_private_key_file=/home/brent/.ssh/id_ed25519
+
+  [workstations]   # workstation.yml
+  odin ansible_connection=local
+
+  [home_servers]   # server.yml, debug.yml
+  odin ansible_connection=local
   ```
 
 #### Check the Ansible variables
@@ -53,7 +61,7 @@ To run the playbook, use the following command from the control node (use the
 -vvv flag for verbose output):
 
 ```bash
-ansible-playbook playbooks/workstation.yml -i inventory.ini --ask-vault-pass --ask-pass --ask-become-pass
+ansible-playbook playbooks/workstation.yml -i inventory.ini --ask-become-pass
 ```
 
 To help debug a task, first add a `tags` to the specific task in the playbook,

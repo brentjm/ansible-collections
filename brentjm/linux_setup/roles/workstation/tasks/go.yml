@@ -1,23 +1,36 @@
 ---
-- name: Download go
-  ansible.builtin.get_url: 
-    url: '{{ go_download_url }}'
-    dest: /home/{{ username }}/Downloads/go.tar.gz
-    mode: '0754'
-    owner: "{{ username }}"
-    group: "{{ username }}"
+# https://go.dev/doc/install — remove any previous /usr/local/go before extracting
+- name: Check installed Go version
+  ansible.builtin.command: /usr/local/go/bin/go version
+  register: go_installed
+  changed_when: false
+  failed_when: false
 
-- name: Untar go distribution
-  ansible.builtin.shell: tar -C /usr/local -xzf go.tar.gz
-  args:
-    chdir: /home/{{ username }}/Downloads/
-  become: true
+- name: Install Go {{ go_version }}
+  when: go_version not in go_installed.stdout | default('')
+  block:
+    - name: Download Go
+      ansible.builtin.get_url:
+        url: "https://go.dev/dl/{{ go_version }}.linux-amd64.tar.gz"
+        dest: /home/{{ username }}/Downloads/go.tar.gz
+        mode: '0644'
+        owner: "{{ username }}"
+        group: "{{ username }}"
 
-- name: 'Add go to PATH'
-  lineinfile:
+    - name: Remove previous Go installation
+      ansible.builtin.file:
+        path: /usr/local/go
+        state: absent
+      become: true
+
+    - name: Extract Go to /usr/local
+      ansible.builtin.unarchive:
+        src: /home/{{ username }}/Downloads/go.tar.gz
+        dest: /usr/local
+        remote_src: true
+      become: true
+
+- name: Add Go to PATH
+  ansible.builtin.lineinfile:
     path: /home/{{ username }}/.bashrc
-    regexp: 'PATH=(["])((?!.*?{{ extra_path }}).*?)(["])$'
-    line: 'PATH=\1\2:{{ extra_path }}\3'
-    backrefs: yes
-  vars:
-    extra_path: /usr/local/go/bin
+    line: 'export PATH="$PATH:/usr/local/go/bin"'
