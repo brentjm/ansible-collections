@@ -6,21 +6,22 @@
   register: plex_installed
   changed_when: false
   failed_when: false
-
+  become: true
 - name: Copy Plex .deb file to remote machine
   ansible.builtin.copy:
     src: "{{ plex_deb_file }}"
     dest: /tmp/plex.deb
     mode: '0644'
   when: plex_installed.rc != 0
-
+  become: true
 - name: Install Plex Media Server
   ansible.builtin.apt:
     deb: /tmp/plex.deb
   when: plex_installed.rc != 0
-
+  become: true
 - name: Allow Plex Media Server port
   community.general.ufw:
     rule: allow
     port: '32400'
     proto: tcp
+  become: true

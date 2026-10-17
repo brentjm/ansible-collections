@@ -31,12 +31,12 @@
   changed_when: false
 
 ## This downloads all fonts - very large
-#- name: "Download NerdFont(s)"
+# - name: "Download NerdFont(s)"
 #  ansible.builtin.git:
 #    repo: https://github.com/ryanoasis/nerd-fonts.git
 #    dest: /home/{{ username }}/Downloads/nerdfonts
 #
-#- name: "Install NerdFont(s)"
+# - name: "Install NerdFont(s)"
 #  ansible.builtin.shell: ./install.sh Hack
 #  args:
 #    chdir: "/home/{{ username }}/Downloads/nerdfonts"

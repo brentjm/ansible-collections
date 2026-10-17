@@ -1,9 +1,9 @@
 ---
 # https://docs.volta.sh/guide/getting-started
 - name: Install Volta
-  ansible.builtin.shell: |
-    curl {{ volta_download_url }} | bash
-  args:
+  ansible.builtin.shell:
+    cmd: set -o pipefail && curl -fsSL {{ volta_download_url }} | bash
+    executable: /bin/bash
     creates: ~/.volta/bin/volta
 
 - name: Ensure Volta is in PATH

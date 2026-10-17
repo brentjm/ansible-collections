@@ -4,12 +4,12 @@
     name: portainer/portainer-ce
     tag: latest
     source: pull
-
+  become: true
 - name: Create Portainer data volume
   community.docker.docker_volume:
     name: portainer_data
     state: present
-
+  become: true
 - name: Create Portainer container
   community.docker.docker_container:
     name: portainer
@@ -23,8 +23,10 @@
       - portainer_data:/data
 
 # https://docs.portainer.io/start/requirements-and-prerequisites
+  become: true
 - name: Open UFW port 9443
   community.general.ufw:
     rule: allow
     port: '9443'
     proto: tcp
+  become: true
