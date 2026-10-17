@@ -9,7 +9,7 @@
 #       become: true
 
 - name: Debug tasks
-  # hosts: home_servers
+  hosts: home_servers
   gather_facts: true
   tasks:
     - name: Debug

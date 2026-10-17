@@ -1,10 +1,5 @@
 ---
-- name: Add Ansible public key to authorized_keys
-  authorized_key:
-    user: "{{ ansible_user }}"
-    state: present
-    key: "{{ lookup('file', '~/.ssh/id_rsa_ansible.pub') }}"
-
+# The control node's key is distributed by playbooks/ssh_setup.yml
 - name: Copy GitHub private key to host
   ansible.builtin.copy:
     src: ~/.ssh/id_ed25519_github
@@ -25,4 +20,3 @@
       source ~/.ssh-agent-env
     fi
   become_user: "{{ ansible_user }}"
-

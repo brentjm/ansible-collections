@@ -1,9 +1,6 @@
 ---
 - name: Setup workstation
-  hosts: home_servers
+  hosts: workstations
   gather_facts: true
   roles:
-    # - ssh
     - workstation
-  vars_files:
-    # - ../roles/ssh/vars/vault.yml

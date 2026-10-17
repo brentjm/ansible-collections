@@ -1,38 +1,39 @@
 # SSH
 
-The `ssh` playbook and role are used to set up SSH on a Linux workstation.
-It should be used as a template and customized for specific needs and provide
-a record of the detail changes.
+`playbooks/ssh_setup.yml` (two plays, no role):
 
-## Creating Ansible Vault to store private data
-
-If the SSH key pair is locked with a passphrase, it should be stored in an
-Ansible Vault file for security.
-
-([linux_setup/roles/workstation/vars/vault.yml](../roles/ssh/vars/vault.yml)).
-
-`vault.yml` file should look like this:
-
-```yaml
-  vault_ssh_key_passphrase: your-secure-passphrase
-```
-
-Then encrypt the file using Ansible Vault:
+1. On the control node (odin): creates `~/.ssh/id_ed25519` with the passphrase
+   from Ansible Vault. Never replaces an existing key, so it is safe to rerun.
+   Needed after a clean rebuild of odin; an in-place upgrade keeps `~/.ssh`.
+2. On every other host in the inventory: adds the public key to
+   `authorized_keys`.
 
 ```bash
-  ansible-vault encrypt roles/ssh/vars/vault.yml
+ansible-playbook -i inventory.ini playbooks/ssh_setup.yml --ask-vault-pass --ask-pass
 ```
 
-## Adding the SSH key to the SSH agent
+`--ask-pass` (login password, uses `sshpass`) is only needed while a host does
+not yet have the key.
 
-Keys can be added to the SSH agent to allow for easier authentication. The
-command to add the SSH key is:
+## Vault file
 
-  ```bash
-  ssh-add ~/.ssh/id_rsa_ansible
-  ```
+`playbooks/vars/vault.yml` (git-ignored) holds:
 
-There is an ansible playbook to automate much of the SSH setup. The `ssh` role
-can be configured to do this as well and provide a record of the change. See
-the tasks in
-[linux_setup/roles/ssh/tasks/main.yml](../roles/ssh/tasks/main.yml).
+```yaml
+vault_ssh_key_passphrase: your-secure-passphrase
+```
+
+Create or edit it with:
+
+```bash
+ansible-vault create playbooks/vars/vault.yml
+ansible-vault edit playbooks/vars/vault.yml
+```
+
+## SSH agent
+
+The key has a passphrase, so load it once per session:
+
+```bash
+ssh-add ~/.ssh/id_ed25519
+```

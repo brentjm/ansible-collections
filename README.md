@@ -16,7 +16,7 @@ To install the Ansible collection, run the following command:
 ## Usage
 
 ```bash
-    ansible-playbook -i playbooks/inventory.ini playbooks/workstation.yml --ask-become-pass
+    ansible-playbook -i inventory.ini playbooks/workstation.yml --ask-become-pass   # run from brentjm/linux_setup
 ```
 
 See the Ansible playbook documentation for more details on how to run specific

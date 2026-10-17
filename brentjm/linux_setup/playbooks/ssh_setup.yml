@@ -1,9 +1,29 @@
 ---
-- name: Setup SSH key pair and distribute to hosts
-  hosts: home_servers
-  gather_facts: true
-  roles:
-    - ssh
+# Create odin's SSH key pair (after a clean rebuild) and put the public key on the servers.
+# First run on a new server needs its login password:
+#   ansible-playbook -i inventory.ini playbooks/ssh_setup.yml --ask-vault-pass --ask-pass
+# The passphrase lives in vars/vault.yml (Ansible Vault, git-ignored).
+
+- name: Create the SSH key pair on the control node
+  hosts: localhost
+  connection: local
+  gather_facts: false
   vars_files:
-    - ../roles/ssh/vars/main.yml
-    - ../roles/ssh/vars/vault.yml
+    - vars/vault.yml
+  tasks:
+    - name: Create ed25519 key pair (never replaces an existing key)
+      community.crypto.openssh_keypair:
+        path: ~/.ssh/id_ed25519
+        type: ed25519
+        passphrase: "{{ vault_ssh_key_passphrase }}"
+        regenerate: never
+
+- name: Authorize the public key on the servers
+  hosts: all:!odin
+  gather_facts: false
+  tasks:
+    - name: Add odin's public key to authorized_keys
+      ansible.posix.authorized_key:
+        user: "{{ ansible_user }}"
+        key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+        state: present
