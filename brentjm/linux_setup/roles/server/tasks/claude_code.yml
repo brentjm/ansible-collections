@@ -1,0 +1,11 @@
+---
+- name: Install Claude Code (native installer, per user)
+  ansible.builtin.shell:
+    cmd: set -o pipefail && curl -fsSL https://claude.ai/install.sh | bash
+    executable: /bin/bash
+    creates: "/home/{{ username }}/.local/bin/claude"
+  become: false
+
+- name: Next step (manual)
+  ansible.builtin.debug:
+    msg: "Run on frigg: claude  (log in once; then /remote-control to reach it from the phone)"

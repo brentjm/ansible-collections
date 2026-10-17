@@ -1,0 +1,48 @@
+---
+- name: Set timezone (trading cron runs on local market time)
+  community.general.timezone:
+    name: "{{ server_timezone }}"
+  become: true
+
+- name: Grow root LV to use all free space in ubuntu-vg
+  community.general.lvol:
+    vg: ubuntu-vg
+    lv: ubuntu-lv
+    size: +100%FREE
+    resizefs: true
+  become: true
+  when:
+    - ansible_lvm is defined
+    - ansible_lvm.vgs['ubuntu-vg'] is defined
+    - ansible_lvm.vgs['ubuntu-vg'].free_g | float > 1
+
+- name: Upgrade all packages
+  ansible.builtin.apt:
+    upgrade: dist
+    update_cache: true
+    autoremove: true
+  become: true
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ server_base_packages }}"
+    state: present
+  become: true
+
+- name: Never reboot automatically after unattended upgrades
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/52unattended-upgrades-local
+    content: |
+      // Managed by Ansible. Reboot by hand outside market hours.
+      Unattended-Upgrade::Automatic-Reboot "false";
+    mode: '0644'
+  become: true
+
+- name: Check whether a reboot is required
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: reboot_required
+
+- name: Report reboot status
+  ansible.builtin.debug:
+    msg: "Reboot required: {{ reboot_required.stat.exists }} (reboot by hand: sudo reboot)"
