@@ -1,16 +1,16 @@
 ---
 - name: Allow SSH port
-  ufw:
+  community.general.ufw:
     rule: allow
     name: OpenSSH
 
 - name: Allow TWS ports from Docker network
-  ufw:
+  community.general.ufw:
     rule: allow
     port: 7496:7497
     proto: tcp
-    src: 172.0.0.0/8
+    src: 172.16.0.0/12  # Docker private range; 172.0.0.0/8 included public addresses
 
 - name: Enable UFW
-  ufw:
+  community.general.ufw:
     state: enabled

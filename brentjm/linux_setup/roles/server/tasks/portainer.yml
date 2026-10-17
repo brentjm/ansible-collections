@@ -5,6 +5,11 @@
     tag: latest
     source: pull
 
+- name: Create Portainer data volume
+  community.docker.docker_volume:
+    name: portainer_data
+    state: present
+
 - name: Create Portainer container
   community.docker.docker_container:
     name: portainer
@@ -17,14 +22,9 @@
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
 
-- name: Create Portainer data volume
-  community.docker.docker_volume:
-    name: portainer_data
-    state: present
-
 # https://docs.portainer.io/start/requirements-and-prerequisites
 - name: Open UFW port 9443
-  ansible.builtin.ufw:
+  community.general.ufw:
     rule: allow
     port: '9443'
     proto: tcp
