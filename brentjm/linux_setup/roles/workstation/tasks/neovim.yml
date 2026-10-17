@@ -29,6 +29,6 @@
 
 - name: Clone Neovim configuration
   ansible.builtin.git:
-    repo: git@github.com:brentjm/Neovim.git
+    repo: https://github.com/brentjm/Neovim.git  # public; HTTPS needs no SSH key on a fresh machine
     dest: /home/{{ username }}/.config/nvim
     update: false  # don't overwrite local config changes

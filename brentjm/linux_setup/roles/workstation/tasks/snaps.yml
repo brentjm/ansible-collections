@@ -10,14 +10,14 @@
       - spotify
       - teams-for-linux
       - youtube-dl
-      - dbeaver-ce
       # - webcamoid
   become: true
 
-- name: Install classic snaps (VS Code, Blender)
+- name: Install classic snaps (VS Code, Blender, DBeaver)
   community.general.snap:
     name:
       - code
       - blender
+      - dbeaver-ce  # classic confinement since 2026
     classic: true
   become: true

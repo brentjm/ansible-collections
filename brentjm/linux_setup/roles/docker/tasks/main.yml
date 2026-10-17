@@ -1,14 +1,13 @@
 ---
 - name: Install required packages
   ansible.builtin.apt:
-    name: "{{ item }}"
+    name:
+      - ca-certificates
+      - curl
+      - python3-debian  # needed by deb822_repository
     state: present
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - gnupg2
-    - python3-debian  # needed by deb822_repository
+    update_cache: true
+    cache_valid_time: 3600
   become: true
 
 - name: Create directory for Docker's GPG key

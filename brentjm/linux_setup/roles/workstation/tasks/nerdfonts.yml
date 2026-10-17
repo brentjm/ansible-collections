@@ -1,4 +1,12 @@
 ---
+- name: Ensure unzip and fontconfig (fc-cache) are installed
+  ansible.builtin.apt:
+    name:
+      - unzip
+      - fontconfig
+    state: present
+  become: true
+
 - name: "Create font directory"
   ansible.builtin.file:
     path: /home/{{ username }}/.local/share/fonts
@@ -7,6 +15,11 @@
     group: "{{ username }}"
     mode: '0755'
 
+- name: Check whether the Hack Nerd Font is installed
+  ansible.builtin.stat:
+    path: /home/{{ username }}/.local/share/fonts/HackNerdFont-Regular.ttf
+  register: workstation_hack_font
+
 - name: "Download NerdFont(s)"
   ansible.builtin.get_url:
     url: "{{ nerdfonts_download_url }}"
@@ -14,17 +27,20 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0664'
+  when: not workstation_hack_font.stat.exists
 
 - name: Unzip NerdFont
   ansible.builtin.unarchive:
     src: "/home/{{ username }}/.local/share/fonts/Hack.zip"
     dest: "/home/{{ username }}/.local/share/fonts/"
     remote_src: true
+  when: not workstation_hack_font.stat.exists
 
 - name: Remove Hack.zip file
   ansible.builtin.file:
     path: "/home/{{ username }}/.local/share/fonts/Hack.zip"
     state: absent
+  when: not workstation_hack_font.stat.exists
 
 - name: Update fonts
   ansible.builtin.command: fc-cache -f

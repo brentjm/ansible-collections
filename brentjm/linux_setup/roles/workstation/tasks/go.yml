@@ -12,7 +12,7 @@
     - name: Download Go
       ansible.builtin.get_url:
         url: "https://go.dev/dl/{{ go_version }}.linux-amd64.tar.gz"
-        dest: /home/{{ username }}/Downloads/go.tar.gz
+        dest: /tmp/go.tar.gz
         mode: '0644'
         owner: "{{ username }}"
         group: "{{ username }}"
@@ -25,7 +25,7 @@
 
     - name: Extract Go to /usr/local
       ansible.builtin.unarchive:
-        src: /home/{{ username }}/Downloads/go.tar.gz
+        src: /tmp/go.tar.gz
         dest: /usr/local
         remote_src: true
       become: true
