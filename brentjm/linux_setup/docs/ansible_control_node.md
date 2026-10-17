@@ -9,11 +9,14 @@ node (see the [support matrix](https://docs.ansible.com/ansible/latest/reference
 
   ```bash
   pipx uninstall ansible        # if the older pipx install exists
-  uv tool install --managed-python --python 3.13 --with bcrypt ansible   # uv-managed Python, not conda
+  uv tool install --managed-python --python 3.13 --with bcrypt \
+    --with-executables-from ansible-core ansible   # without this flag only ansible-community is linked
   ansible --version             # core 2.20+ expected
   ```
 
-- Install the collections the roles use (listed in `requirements.yml`):
+- The `ansible` package already bundles the collections in `requirements.yml`
+  (2026-10-16, ansible core 2.21.5: community.general 13.5, community.crypto 3.5,
+  community.docker 5.4, ansible.posix 2.2). With ansible-core alone, install them:
 
   ```bash
   cd brentjm/linux_setup

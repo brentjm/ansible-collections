@@ -11,7 +11,7 @@ ansible-playbook playbooks/trading_server.yml --ask-become-pass
 ansible-playbook playbooks/trading_server.yml --ask-become-pass --tags docker   # one part only
 ```
 
-Test on the Vagrant VM first: see [testing.md](testing.md).
+Test on the KVM VM first: see [testing.md](testing.md).
 
 ## What it does
 

@@ -72,7 +72,7 @@ ansible-playbook playbooks/workstation.yml --ask-become-pass --tags signal
 ansible-playbook playbooks/workstation.yml --ask-become-pass --skip-tags latex,snaps
 ```
 
-Test on the Vagrant VM first: see [testing.md](testing.md).
+Test on the KVM VM first: see [testing.md](testing.md).
 
 ### Post installation steps
 

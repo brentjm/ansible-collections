@@ -7,8 +7,8 @@
     - apt-transport-https
     - ca-certificates
     - curl
-    - software-properties-common
     - gnupg2
+    - python3-debian  # needed by deb822_repository
   become: true
 
 - name: Create directory for Docker's GPG key
@@ -26,13 +26,21 @@
     force: true
   become: true
 
+- name: Remove old one-line Docker source (replaced by docker.sources)
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/docker.list
+    state: absent
+  become: true
+
 - name: Add Docker repository
-  ansible.builtin.apt_repository:
-    repo: >-
-          deb [arch={{ docker_architecture }}
-          signed-by=/etc/apt/keyrings/docker.asc]
-          https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable
-    state: present
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: deb
+    uris: https://download.docker.com/linux/ubuntu
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: stable
+    architectures: "{{ docker_architecture }}"
+    signed_by: /etc/apt/keyrings/docker.asc
   become: true
 
 - name: Install Docker and related packages
