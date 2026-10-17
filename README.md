@@ -2,12 +2,16 @@
 
 ## Playbooks
 
-- [Linux setup Ansible collection](./brentjm/linux_setup/docs/toc.md)
+- [Linux setup](./brentjm/linux_setup/docs/toc.md) (plain Ansible project)
 - [Proxmox setup Ansible collection](./brentjm/proxmox_setup/docs/toc.md)
 
 ## Install
 
-To install the Ansible collection, run the following command:
+Linux setup is a plain project: clone the repo and run from
+`brentjm/linux_setup` (see its
+[control node setup](./brentjm/linux_setup/docs/ansible_control_node.md)).
+
+Proxmox setup is still a collection:
 
 ```bash
     ansible-galaxy collection install git+https://github.com/brentjm/ansible-collections.git
@@ -16,7 +20,8 @@ To install the Ansible collection, run the following command:
 ## Usage
 
 ```bash
-    ansible-playbook -i inventory.ini playbooks/workstation.yml --ask-become-pass   # run from brentjm/linux_setup
+    cd brentjm/linux_setup
+    ansible-playbook playbooks/workstation.yml --ask-become-pass
 ```
 
 See the Ansible playbook documentation for more details on how to run specific

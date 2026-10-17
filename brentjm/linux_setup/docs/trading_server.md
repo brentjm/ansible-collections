@@ -7,18 +7,21 @@ Nothing else is installed, to keep it stable.
 
 ```bash
 cd brentjm/linux_setup
-ansible-playbook -i inventory.ini playbooks/trading_server.yml --ask-become-pass
+ansible-playbook playbooks/trading_server.yml --ask-become-pass
+ansible-playbook playbooks/trading_server.yml --ask-become-pass --tags docker   # one part only
 ```
+
+Test on the Vagrant VM first: see [testing.md](testing.md).
 
 ## What it does
 
-| Step | Task file | Detail |
-| --- | --- | --- |
-| Base | `roles/server/tasks/base.yml` | Timezone America/New_York (cron uses market time), grow root LV to the whole disk, dist-upgrade, base packages, unattended upgrades never reboot |
-| Docker | `roles/server/tasks/docker.yml` | Docker apt repo, engine, compose; user in `docker` group |
-| Tailscale | `roles/server/tasks/tailscale.yml` | Commented out: Claude Remote Control needs no inbound access |
-| Firewall | `roles/server/tasks/firewall.yml` | UFW: deny incoming, allow OpenSSH and tailscale0 |
-| Claude Code | `roles/server/tasks/claude_code.yml` | Native installer for the user |
+| Role (tag) | Detail |
+| --- | --- |
+| `base` | Timezone (`base_timezone`, America/New_York in `group_vars/all.yml`; the cron uses market time), grow root LV to the whole disk, dist-upgrade, `base_packages`, unattended upgrades never reboot |
+| `docker` | Docker apt repo, engine, compose; `username` in the `docker` group |
+| `tailscale` | Commented out: Claude Remote Control needs no inbound access |
+| `firewall` | UFW: deny incoming, allow OpenSSH |
+| `claude_code` | Native installer for `username` |
 
 ## Manual afterwards
 

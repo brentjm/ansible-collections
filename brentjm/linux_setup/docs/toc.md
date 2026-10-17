@@ -14,3 +14,4 @@ message brokers, home automation, ...etc.
 - [server](server.md)
 - [trading server (frigg)](trading_server.md)
 - [control node setup](ansible_control_node.md)
+- [testing in a VM](testing.md)

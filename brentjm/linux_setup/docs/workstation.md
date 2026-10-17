@@ -49,39 +49,30 @@ Check the groups in the inventory file
 
 #### Check the Ansible variables
 
-The variables contain information like the download URLs for some of the tools
-and the paths where they will be installed. These variables are defined under
-the roles directories.
-
-([linux_setup/playbooks/workstation/vars/main.yml](../roles/workstation/vars/main.yml)).
+Download URLs and versions are in
+[roles/workstation/defaults/main.yml](../roles/workstation/defaults/main.yml).
+`username` and the timezone are in [group_vars/all.yml](../group_vars/all.yml).
+Override any default in `group_vars/workstations.yml`.
 
 ### Run the Ansible playbooks
 
-To run the playbook, use the following command from the control node (use the
--vvv flag for verbose output):
+Run from `brentjm/linux_setup` (add `-vvv` for verbose output). odin is in the
+inventory with a local connection, so this runs on odin itself:
 
 ```bash
-ansible-playbook playbooks/workstation.yml -i inventory.ini --ask-become-pass
+ansible-playbook playbooks/workstation.yml --ask-become-pass
 ```
 
-To help debug a task, first add a `tags` to the specific task in the playbook,
-then run the `debug` playbook with the `--tags` option.  For example:
-
-```yaml
-    - name: Update fonts
-      ansible.builtin.shell: fc-cache -f -v
-      tags: debug
-```
+Each step has a tag (list in
+[roles/workstation/tasks/main.yml](../roles/workstation/tasks/main.yml)), plus
+`docker` and `firewall`:
 
 ```bash
-ansible-playbook playbooks/debug.yml -i inventory.ini --tags "debug"
+ansible-playbook playbooks/workstation.yml --ask-become-pass --tags signal
+ansible-playbook playbooks/workstation.yml --ask-become-pass --skip-tags latex,snaps
 ```
 
-To run the playbook on the workstation itself, use the following command
-
-```bash
-ansible-playbook playbooks/workstation.yml -i localhost, --connection=local --ask-vault-pass --ask-become-pass
-```
+Test on the Vagrant VM first: see [testing.md](testing.md).
 
 ### Post installation steps
 

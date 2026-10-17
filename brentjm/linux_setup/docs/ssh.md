@@ -9,7 +9,7 @@
    `authorized_keys`.
 
 ```bash
-ansible-playbook -i inventory.ini playbooks/ssh_setup.yml --ask-vault-pass --ask-pass
+ansible-playbook playbooks/ssh_setup.yml --ask-vault-pass --ask-pass
 ```
 
 `--ask-pass` (login password, uses `sshpass`) is only needed while a host does
