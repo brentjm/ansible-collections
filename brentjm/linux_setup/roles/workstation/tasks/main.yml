@@ -56,6 +56,10 @@
   ansible.builtin.import_tasks: dropbox.yml
   tags: dropbox
 
+- name: Install KeePassXC
+  ansible.builtin.import_tasks: keepassxc.yml
+  tags: keepassxc
+
 - name: Install IBKR Trader Workstation
   ansible.builtin.import_tasks: ibkr_tws.yml
   tags: ibkr_tws

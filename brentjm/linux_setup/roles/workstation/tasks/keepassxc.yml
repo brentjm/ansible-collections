@@ -20,10 +20,32 @@
 
 - name: Unshare KeePassXC flatpak sandbox
   ansible.builtin.command:
-    cmd: flatpak override --user --unshare=network,ipc,dbus org.keepassxc.KeePassXC
+    cmd: flatpak override --user --unshare=network --unshare=ipc org.keepassxc.KeePassXC
 
 - name: Confirm that the network sharing is disabled
   ansible.builtin.command:
     cmd: flatpak info --show-permissions org.keepassxc.KeePassXC
   register: flatpak_info
   changed_when: false
+
+# The database (infoBase) syncs through Dropbox. The key file is never in this repo:
+# it is copied from keepassxc_keyfile_src (the data_pool backup) when that file exists.
+- name: Create private KeePassXC key directory
+  ansible.builtin.file:
+    path: "{{ keepassxc_keyfile_dest | dirname }}"
+    state: directory
+    mode: "0700"
+
+- name: Check for the KeePassXC key file backup
+  ansible.builtin.stat:
+    path: "{{ keepassxc_keyfile_src }}"
+  register: keepassxc_keyfile
+
+- name: Copy the KeePassXC key file
+  ansible.builtin.copy:
+    src: "{{ keepassxc_keyfile_src }}"
+    dest: "{{ keepassxc_keyfile_dest }}"
+    remote_src: true
+    mode: "0600"
+    force: false
+  when: keepassxc_keyfile.stat.exists
