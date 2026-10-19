@@ -1,0 +1,49 @@
+---
+- name: Install Neovim basic utils
+  ansible.builtin.apt:
+    pkg:
+      - git
+      - build-essential
+      - make
+      - unzip
+      - ripgrep
+      - xclip
+  become: true
+
+# desktop_base also does these two; repeated so this role works on its own
+- name: Install libfuse2 for AppImages
+  ansible.builtin.apt:
+    name: libfuse2t64
+    state: present
+  become: true
+
+- name: Create AppImage directory
+  ansible.builtin.file:
+    path: /home/{{ username }}/bin
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Install Neovim AppImage # https://github.com/neovim/neovim/blob/master/INSTALL.md
+  ansible.builtin.get_url:
+    url: "{{ neovim_download_url }}"
+    dest: /home/{{ username }}/bin/nvim.appimage
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0774'
+
+- name: Create symbolic link to app image
+  ansible.builtin.file:
+    src: /home/{{ username }}/bin/nvim.appimage
+    dest: /home/{{ username }}/bin/nvim
+    state: link
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Clone Neovim configuration
+  ansible.builtin.git:
+    repo: https://github.com/brentjm/Neovim.git  # public; HTTPS needs no SSH key on a fresh machine
+    dest: /home/{{ username }}/.config/nvim
+    update: false  # don't overwrite local config changes

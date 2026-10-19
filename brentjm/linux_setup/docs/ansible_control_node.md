@@ -35,12 +35,14 @@ no `-i` is needed.
 | `group_vars/all.yml` | Settings for every machine (`username`, timezone) |
 | `group_vars/<group>.yml` | Per-group overrides (create when needed) |
 | `roles/<name>/defaults/main.yml` | Each role's default settings |
-| `roles/` | `base`, `docker`, `firewall`, `claude_code`, `tailscale`, `workstation`, `server` |
+| `roles/` | One role per application (`docker`, `keepassxc`, `neovim`, …) plus `base`, `desktop_base`, `firewall`, `server` |
 | `playbooks/` | One per machine type; each is a list of roles with tags |
 | `test/` | Vagrant VM for testing, see [testing.md](testing.md) |
 
 ## Conventions
 
 - Playbooks never set `become`; each task that needs root says `become: true`.
-- Every role in a playbook has a tag, and the workstation steps each have one,
-  so `--tags` / `--skip-tags` run or skip parts.
+- One role per application; a playbook's role list is that machine's software.
+- Every role in a playbook has a tag named after the role, so `--tags` /
+  `--skip-tags` run or skip parts.
+- Role variables start with the role name and live in the role's `defaults/main.yml`.

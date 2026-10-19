@@ -1,0 +1,15 @@
+---
+snaps_packages:
+  - inkscape
+  - gimp
+  - chromium
+  - jq
+  - obs-studio
+  - spotify
+  - teams-for-linux
+  - youtube-dl
+  # - webcamoid
+snaps_classic_packages:
+  - code
+  - blender
+  - dbeaver-ce  # classic confinement since 2026

@@ -1,0 +1,11 @@
+---
+- name: Install snap applications
+  community.general.snap:
+    name: "{{ snaps_packages }}"
+  become: true
+
+- name: Install classic snaps
+  community.general.snap:
+    name: "{{ snaps_classic_packages }}"
+    classic: true
+  become: true

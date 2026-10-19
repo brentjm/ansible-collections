@@ -1,0 +1,3 @@
+---
+keepassxc_keyfile_src: "/mnt/data_pool/keepass-backup/infoClavis"
+keepassxc_keyfile_dest: "/home/{{ username }}/.local/share/keepassxc/infoClavis"

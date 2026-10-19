@@ -1,0 +1,7 @@
+---
+desktop_base_packages:
+  - git
+  - sshpass
+  - cargo
+  - python3-pip
+  - python3-venv

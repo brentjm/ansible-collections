@@ -49,8 +49,8 @@ Check the groups in the inventory file
 
 #### Check the Ansible variables
 
-Download URLs and versions are in
-[roles/workstation/defaults/main.yml](../roles/workstation/defaults/main.yml).
+Download URLs and versions are in each role's `defaults/main.yml`
+(e.g. [roles/neovim/defaults/main.yml](../roles/neovim/defaults/main.yml)).
 `username` and the timezone are in [group_vars/all.yml](../group_vars/all.yml).
 Override any default in `group_vars/workstations.yml`.
 
@@ -63,9 +63,9 @@ inventory with a local connection, so this runs on odin itself:
 ansible-playbook playbooks/workstation.yml --ask-become-pass
 ```
 
-Each step has a tag (list in
-[roles/workstation/tasks/main.yml](../roles/workstation/tasks/main.yml)), plus
-`docker` and `firewall`:
+The roles listed in [playbooks/workstation.yml](../playbooks/workstation.yml)
+are the workstation's software, one role per application. Each role's tag is
+its name:
 
 ```bash
 ansible-playbook playbooks/workstation.yml --ask-become-pass --tags signal
@@ -76,7 +76,10 @@ Test on the KVM VM first: see [testing.md](testing.md).
 
 ### Post installation steps
 
-- The `nautilus-dropbox` pakckage will propt a dialog that will download and
-install the Dropbox client, and sign into the Dropbox account. Follow the
-instructions to complete the installation.
+- Dropbox: run `dropbox start -i`, then open the link it prints to sign in.
+  Dropbox Basic allows 3 devices; unlink the old machine first at
+  dropbox.com > Settings > Security. The "restart Nautilus" message from the
+  old file-manager add-on can be closed; syncing works without it.
+- KeePassXC: open `~/Dropbox/infoBase` with the key file the role copies to
+  `~/.local/share/keepassxc/infoClavis`.
 - In Gnome settings, open online accounts and add your Google account.

@@ -1,11 +1,10 @@
 ---
-# Run one workstation task file by itself. Change tasks_from as needed.
+# Run one role by itself. Change name as needed.
 # (Tags usually do this more simply: workstation.yml --tags signal)
 - name: Debug tasks
-  hosts: home_servers
+  hosts: workstations
   gather_facts: true
   tasks:
-    - name: Run one task file from the workstation role
+    - name: Run one role
       ansible.builtin.include_role:
-        name: workstation
-        tasks_from: signal.yml
+        name: signal

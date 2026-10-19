@@ -1,12 +1,27 @@
 ---
-# Development workstation (Ubuntu Desktop 26.04). Run one part with --tags <tag>;
-# tags are listed in roles/workstation/tasks/main.yml.
+# Development workstation (Ubuntu Desktop 26.04). One role per application:
+# this list is the machine's software. Run one with --tags <role>,
+# skip with --skip-tags <role>.
 - name: Setup workstation
   hosts: workstations
   gather_facts: true
   roles:
-    - role: docker
-      tags: docker
-    - role: firewall
-      tags: firewall
-    - role: workstation
+    - { role: desktop_base, tags: desktop_base }
+    - { role: docker, tags: docker }
+    - { role: firewall, tags: firewall }
+    - { role: snaps, tags: snaps }
+    - { role: nodejs, tags: nodejs }
+    - { role: neovim, tags: neovim }
+    - { role: go, tags: go }
+    - { role: dotnet, tags: dotnet }
+    - { role: latex, tags: latex }
+    - { role: lazygit, tags: lazygit }
+    - { role: nerdfonts, tags: nerdfonts }
+    - { role: dropbox, tags: dropbox }
+    - { role: keepassxc, tags: keepassxc }
+    - { role: signal, tags: signal }
+    - { role: claude_code, tags: claude_code }
+    # Available but not on odin:
+    # - { role: conda, tags: conda }          # replaced by uv
+    # - { role: ibkr_tws, tags: ibkr_tws }    # trading runs on frigg
+    # - { role: virtualbox, tags: virtualbox }
