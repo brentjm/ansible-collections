@@ -38,7 +38,7 @@ Check the groups in the inventory file
 
   ```ini
   [trading]        # trading_server.yml only
-  frigg ansible_host=192.168.68.55 ansible_user=brent ansible_ssh_private_key_file=/home/brent/.ssh/id_ed25519
+  frigg ansible_host=192.168.68.61 ansible_user=brent ansible_ssh_private_key_file=/home/brent/.ssh/id_ed25519
 
   [workstations]   # workstation.yml
   odin ansible_connection=local
