@@ -17,10 +17,18 @@
     cmd: /home/{{ username }}/.volta/bin/volta install node@{{ nodejs_version }}
     creates: ~/.volta/tools/image/node/{{ nodejs_version }}
 
+# Volta creates ~/.volta/tools/image/yarn empty on first run, so that folder
+# can't show whether Yarn is installed; ask Volta instead.
+- name: Check for Yarn
+  ansible.builtin.command:
+    cmd: /home/{{ username }}/.volta/bin/volta list yarn --format plain
+  register: nodejs_yarn
+  changed_when: false
+
 - name: Install Yarn using Volta
   ansible.builtin.command:
     cmd: /home/{{ username }}/.volta/bin/volta install yarn
-    creates: ~/.volta/tools/image/yarn
+  when: "'yarn@' not in nodejs_yarn.stdout"
 
 - name: Install global Node.js tools
   ansible.builtin.import_tasks: global_tools.yml

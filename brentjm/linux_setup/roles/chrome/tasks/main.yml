@@ -1,0 +1,12 @@
+---
+# https://support.google.com/chrome/a/answer/9025903 — the package adds Google's
+# apt source itself, so later updates come with the normal apt upgrades.
+- name: Read installed packages
+  ansible.builtin.package_facts:
+
+- name: Install Google Chrome
+  ansible.builtin.apt:
+    deb: "{{ chrome_deb_url }}"
+    state: present
+  become: true
+  when: "'google-chrome-stable' not in ansible_facts['packages']"

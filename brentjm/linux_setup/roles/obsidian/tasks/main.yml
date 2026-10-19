@@ -1,0 +1,12 @@
+---
+# https://obsidian.md/download — the .deb adds the menu entry and icon.
+# The vault (~/Documents/notes) and ~/.config/obsidian come from backups, not Ansible.
+- name: Read installed packages
+  ansible.builtin.package_facts:
+
+- name: Install Obsidian
+  ansible.builtin.apt:
+    deb: "{{ obsidian_deb_url }}"
+    state: present
+  become: true
+  when: "'obsidian' not in ansible_facts['packages']"

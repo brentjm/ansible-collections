@@ -20,6 +20,8 @@
     - { role: dropbox, tags: dropbox }
     - { role: keepassxc, tags: keepassxc }
     - { role: signal, tags: signal }
+    - { role: chrome, tags: chrome }
+    - { role: obsidian, tags: obsidian }
     - { role: claude_code, tags: claude_code }
     # Available but not on odin:
     # - { role: conda, tags: conda }          # replaced by uv
