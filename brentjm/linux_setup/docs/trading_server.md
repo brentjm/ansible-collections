@@ -22,6 +22,7 @@ Test on the KVM VM first: see [testing.md](testing.md).
 | `tailscale` | Commented out: Claude Remote Control needs no inbound access |
 | `firewall` | UFW: deny incoming, allow OpenSSH |
 | `claude_code` | Native installer for `username` |
+| `neovim` | Build tools, ripgrep, libfuse2; Neovim AppImage in `~/bin`; config cloned from `brentjm/Neovim` (same role as odin) |
 
 ## Manual afterwards
 

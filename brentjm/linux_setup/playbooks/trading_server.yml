@@ -15,3 +15,5 @@
       tags: firewall
     - role: claude_code
       tags: claude_code
+    - role: neovim
+      tags: neovim
