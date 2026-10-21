@@ -37,7 +37,7 @@ no `-i` is needed.
 | `roles/<name>/defaults/main.yml` | Each role's default settings |
 | `roles/` | One role per application (`docker`, `keepassxc`, `neovim`, …) plus `base`, `desktop_base`, `firewall`, `server` |
 | `playbooks/` | One per machine type; each is a list of roles with tags |
-| `test/` | Vagrant VM for testing, see [testing.md](testing.md) |
+| `test/` | Throwaway Ubuntu 26.04 VM (QEMU/KVM, `vm.sh`) for testing, see [testing.md](testing.md) |
 
 ## Conventions
 

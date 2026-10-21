@@ -4,6 +4,9 @@
 VirtualBox). `test/inventory.ini` puts the VM in every group, so any playbook
 can run against it instead of frigg or odin.
 
+Needs on the host: `sudo apt install qemu-system-x86 qemu-utils genisoimage`
+(`genisoimage` builds the cloud-init seed disk with the VM's user and SSH key).
+
 ```bash
 cd brentjm/linux_setup
 test/vm.sh up        # first run downloads the image (~600 MB) and checks its SHA256
