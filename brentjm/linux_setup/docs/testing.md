@@ -6,6 +6,7 @@ can run against it instead of frigg or odin.
 
 Needs on the host: `sudo apt install qemu-system-x86 qemu-utils genisoimage`
 (`genisoimage` builds the cloud-init seed disk with the VM's user and SSH key).
+The `test_vm` role installs these on odin (`workstation.yml --tags test_vm`).
 
 ```bash
 cd brentjm/linux_setup

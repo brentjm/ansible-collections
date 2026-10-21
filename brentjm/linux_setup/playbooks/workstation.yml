@@ -23,6 +23,7 @@
     - { role: chrome, tags: chrome }
     - { role: obsidian, tags: obsidian }
     - { role: claude_code, tags: claude_code }
+    - { role: test_vm, tags: test_vm }
     # Available but not on odin:
     # - { role: conda, tags: conda }          # replaced by uv
     # - { role: ibkr_tws, tags: ibkr_tws }    # trading runs on frigg

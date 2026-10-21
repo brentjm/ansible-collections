@@ -1,0 +1,10 @@
+---
+# Host packages for test/vm.sh (docs/testing.md): QEMU/KVM runs the VM,
+# genisoimage builds its cloud-init seed disk.
+- name: Install test VM packages
+  ansible.builtin.apt:
+    pkg:
+      - qemu-system-x86
+      - qemu-utils
+      - genisoimage
+  become: true
