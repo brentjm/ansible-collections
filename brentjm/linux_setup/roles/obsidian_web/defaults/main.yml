@@ -1,0 +1,10 @@
+---
+# Obsidian in a browser (linuxserver/obsidian, KasmVNC), reachable only over Tailscale.
+# Phone: https://<odin MagicDNS name>:<obsidian_web_tailscale_port>
+obsidian_web_image: lscr.io/linuxserver/obsidian:latest
+obsidian_web_dir: "/home/{{ username }}/obsidian-web"       # compose file + app config
+obsidian_web_vault: "/home/{{ username }}/Documents/notes"  # mounted at /vault in the container
+obsidian_web_local_port: 3001                               # container HTTPS, bound to 127.0.0.1 only
+obsidian_web_tailscale_port: 8443
+# Basic-auth password lives on the host (never in git); created on first run.
+obsidian_web_password_file: "/home/{{ username }}/.config/obsidian_web/password"

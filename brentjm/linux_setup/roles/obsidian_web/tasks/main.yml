@@ -1,0 +1,86 @@
+---
+# Needs the docker role. The web UI has a passwordless root terminal and mounts the vault,
+# so it is bound to localhost and published to the tailnet only (tailscale serve, no Funnel).
+- name: Look up the user's ids
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ username }}"
+
+- name: Set container user ids
+  ansible.builtin.set_fact:
+    obsidian_web_uid: "{{ getent_passwd[username][1] }}"
+    obsidian_web_gid: "{{ getent_passwd[username][2] }}"
+
+- name: Create config directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ username }}"
+    mode: '0700'
+  loop:
+    - "{{ obsidian_web_dir }}"
+    - "{{ obsidian_web_dir }}/config"
+    - "{{ obsidian_web_password_file | dirname }}"
+
+- name: Generate the web password (kept on this host only)
+  ansible.builtin.copy:
+    dest: "{{ obsidian_web_password_file }}"
+    content: "{{ lookup('ansible.builtin.password', '/dev/null length=24 chars=ascii_letters,digits') }}"
+    force: false
+    owner: "{{ username }}"
+    mode: '0600'
+
+- name: Read the web password
+  ansible.builtin.slurp:
+    src: "{{ obsidian_web_password_file }}"
+  register: obsidian_web_password_raw
+  no_log: true
+
+- name: Write the compose file
+  ansible.builtin.template:
+    src: compose.yml.j2
+    dest: "{{ obsidian_web_dir }}/compose.yml"
+    owner: "{{ username }}"
+    mode: '0600'
+  vars:
+    obsidian_web_password: "{{ obsidian_web_password_raw.content | b64decode }}"
+  no_log: true
+
+- name: Start Obsidian web
+  community.docker.docker_compose_v2:
+    project_src: "{{ obsidian_web_dir }}"
+    files: [compose.yml]
+    state: present
+    pull: missing
+  become: true
+
+- name: Check Tailscale login
+  ansible.builtin.command: tailscale status --json
+  register: obsidian_web_ts
+  changed_when: false
+  failed_when: false
+
+- name: Read Tailscale serve status
+  ansible.builtin.command: tailscale serve status
+  register: obsidian_web_serve
+  changed_when: false
+  failed_when: false
+  become: true
+
+- name: Publish to the tailnet (HTTPS, tailnet only)
+  ansible.builtin.command: >
+    tailscale serve --bg --https={{ obsidian_web_tailscale_port }}
+    https+insecure://localhost:{{ obsidian_web_local_port }}
+  become: true
+  when:
+    - obsidian_web_ts.rc == 0
+    - (obsidian_web_ts.stdout | from_json).BackendState == 'Running'
+    - ('localhost:' ~ obsidian_web_local_port) not in obsidian_web_serve.stdout
+  changed_when: true
+
+- name: Next steps (manual)
+  ansible.builtin.debug:
+    msg:
+      - "1. Tailscale: sudo tailscale up, then enable HTTPS certificates in the admin console (DNS page); re-run with --tags obsidian_web."
+      - "2. First visit: log in as {{ username }} (password in {{ obsidian_web_password_file }}), open folder /vault, trust plugins."
+      - "3. Phone: install Tailscale, open https://<odin MagicDNS name>:{{ obsidian_web_tailscale_port }}."

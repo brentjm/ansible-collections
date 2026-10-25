@@ -15,3 +15,4 @@ message brokers, home automation, ...etc.
 - [trading server (frigg)](trading_server.md)
 - [control node setup](ansible_control_node.md)
 - [testing in a KVM VM](testing.md)
+- [Obsidian in a browser (phone view)](obsidian_web.md)

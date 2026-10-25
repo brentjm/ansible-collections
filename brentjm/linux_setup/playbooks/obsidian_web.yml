@@ -1,0 +1,9 @@
+---
+# Obsidian in a browser on odin, reachable over Tailscale only. Run one role with --tags <role>.
+- name: Obsidian web (phone view of the vault)
+  hosts: home_servers
+  gather_facts: true
+  roles:
+    - { role: docker, tags: docker }
+    - { role: tailscale, tags: tailscale }
+    - { role: obsidian_web, tags: obsidian_web }
