@@ -1,0 +1,20 @@
+---
+# HP LaserJet P1102w on USB, shared by CUPS to the LAN (AirPrint/IPP) and the tailnet.
+# Clients: ipp://odin.local:631/printers/<printer_queue> (found automatically on the LAN).
+printer_queue: HP-LaserJet-Professional-P-1102w
+printer_ppd: drv:///hpcups.drv/hp-laserjet_professional_p_1102w.ppd
+printer_usb_uri_prefix: hp:/usb/HP_LaserJet_Professional_P_1102w
+
+# HP's proprietary plugin must match the installed hplip version. The saved copy is used
+# first; otherwise it is downloaded. Add a checksum here when Ubuntu ships a new hplip.
+printer_plugin_dir: "/mnt/data_pool/seagate-archive/shares/Shared Files/Computer Files/HPPrinter/2026-ubuntu"
+printer_plugin_url: https://www.openprinting.org/download/printdriver/auxfiles/HP/plugins
+printer_plugin_sha256:
+  "3.24.4": 1f3c6bdd25661a8a2e18153655d6f06f028c1d9c308d69c8ecfd7767a2d0c5aa
+
+# Who may print. @LOCAL does not cover tailnet peers (tailscale0 is a /32).
+printer_lan_cidr: 192.168.68.0/22
+printer_allow_from:
+  - "@LOCAL"
+  - 100.64.0.0/10          # Tailscale IPv4
+  - fd7a:115c:a1e0::/48    # Tailscale IPv6

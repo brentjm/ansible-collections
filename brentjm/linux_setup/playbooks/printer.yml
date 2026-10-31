@@ -1,0 +1,9 @@
+---
+# HP LaserJet P1102w (USB on odin) shared to the house by CUPS. Tailscale (for printing from
+# outside) comes from playbooks/obsidian_web.yml or: ansible-playbook playbooks/printer.yml --tags tailscale
+- name: Printer server
+  hosts: home_servers
+  gather_facts: true
+  roles:
+    - { role: tailscale, tags: [never, tailscale] }
+    - { role: printer, tags: printer }

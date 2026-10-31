@@ -16,3 +16,4 @@ message brokers, home automation, ...etc.
 - [control node setup](ansible_control_node.md)
 - [testing in a KVM VM](testing.md)
 - [Obsidian in a browser (phone view)](obsidian_web.md)
+- [printer server](printer.md)

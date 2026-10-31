@@ -1,0 +1,220 @@
+---
+# The P1102w needs HP's proprietary plugin (hpcups calls its lj.so); open-source hplip alone
+# prints nothing. Admin pages stay localhost-only; only printing is opened to the network.
+- name: Install CUPS, mDNS and hplip
+  ansible.builtin.apt:
+    name:
+      - cups
+      - avahi-daemon
+      - libnss-mdns
+      - cups-ipp-utils    # ippfind: check what odin advertises
+      - hplip
+      - hplip-gui
+      - printer-driver-hpcups
+    state: present
+  become: true
+
+- name: Read the hplip version
+  ansible.builtin.command: dpkg-query -W -f=${Version} hplip
+  register: printer_hplip_pkg
+  changed_when: false
+
+- name: Set plugin facts
+  ansible.builtin.set_fact:
+    printer_hplip_version: "{{ printer_hplip_pkg.stdout | regex_search('^[0-9.]+') }}"
+    printer_plugin_file: "hplip-{{ printer_hplip_pkg.stdout | regex_search('^[0-9.]+') }}-plugin.run"
+
+- name: Read the plugin state
+  ansible.builtin.command: cat /var/lib/hp/hplip.state
+  register: printer_plugin_state
+  changed_when: false
+  failed_when: false
+
+- name: Install the HP plugin
+  when: >-
+    printer_plugin_state.rc != 0
+    or printer_plugin_state.stdout is not search('installed\s*=\s*1')
+    or printer_plugin_state.stdout is not search('version\s*=\s*' ~ printer_hplip_version)
+  block:
+    - name: Check there is a checksum for this hplip version
+      ansible.builtin.assert:
+        that: printer_hplip_version in printer_plugin_sha256
+        fail_msg: >-
+          No checksum for {{ printer_plugin_file }}. Download it and its .asc from
+          {{ printer_plugin_url }}, check the signature (HPLIP key ...A59047B9),
+          then add its sha256 to printer_plugin_sha256.
+
+    - name: Make a work directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: hplip-plugin
+      register: printer_tmp
+      become: true
+
+    - name: Look for the saved plugin
+      ansible.builtin.stat:
+        path: "{{ printer_plugin_dir }}/{{ printer_plugin_file }}"
+      register: printer_saved
+
+    - name: Copy the saved plugin and signature
+      ansible.builtin.copy:
+        src: "{{ printer_plugin_dir }}/{{ item }}"
+        dest: "{{ printer_tmp.path }}/{{ item }}"
+        mode: '0644'
+      loop:
+        - "{{ printer_plugin_file }}"
+        - "{{ printer_plugin_file }}.asc"
+      when: printer_saved.stat.exists
+      become: true
+
+    - name: Download the plugin and signature
+      ansible.builtin.get_url:
+        url: "{{ printer_plugin_url }}/{{ item }}"
+        dest: "{{ printer_tmp.path }}/{{ item }}"
+        mode: '0644'
+      loop:
+        - "{{ printer_plugin_file }}"
+        - "{{ printer_plugin_file }}.asc"
+      when: not printer_saved.stat.exists
+      become: true
+
+    - name: Check the plugin checksum
+      ansible.builtin.stat:
+        path: "{{ printer_tmp.path }}/{{ printer_plugin_file }}"
+        checksum_algorithm: sha256
+      register: printer_plugin_sum
+      become: true
+      failed_when: printer_plugin_sum.stat.checksum != printer_plugin_sha256[printer_hplip_version]
+
+    # hp-plugin -i asks to accept HP's license (and to install if the keyserver is down);
+    # the checksum above already pins the file, so answer yes. No pipefail: `yes` always
+    # dies of SIGPIPE; the hplip.state check below is the real test.
+    - name: Run hp-plugin  # noqa: risky-shell-pipe
+      ansible.builtin.shell: yes y | hp-plugin -i -p {{ printer_tmp.path }}/{{ printer_plugin_file }}
+      register: printer_hp_plugin
+      changed_when: true
+      become: true
+
+    - name: Remove the work directory
+      ansible.builtin.file:
+        path: "{{ printer_tmp.path }}"
+        state: absent
+      become: true
+
+    - name: Confirm the plugin is installed
+      ansible.builtin.command: cat /var/lib/hp/hplip.state
+      register: printer_plugin_after
+      changed_when: false
+      failed_when: >-
+        printer_plugin_after.stdout is not search('installed\s*=\s*1')
+        or printer_plugin_after.stdout is not search('version\s*=\s*' ~ printer_hplip_version)
+
+- name: Listen on the network, not just localhost
+  ansible.builtin.lineinfile:
+    path: /etc/cups/cupsd.conf
+    regexp: '^(Listen localhost:631|Port 631)$'
+    line: Port 631
+  notify: Restart cups
+  become: true
+
+- name: Accept any host name (odin, odin.local, the Tailscale name)
+  ansible.builtin.lineinfile:
+    path: /etc/cups/cupsd.conf
+    regexp: '^ServerAlias '
+    line: ServerAlias *
+    insertafter: '^Port 631$'
+  notify: Restart cups
+  become: true
+
+- name: Advertise shared printers (DNS-SD; AirPrint and Mopria find it)
+  ansible.builtin.lineinfile:
+    path: /etc/cups/cupsd.conf
+    regexp: '^Browsing '
+    line: Browsing Yes
+  notify: Restart cups
+  become: true
+
+- name: Allow printing from the LAN and the tailnet
+  ansible.builtin.replace:
+    path: /etc/cups/cupsd.conf
+    regexp: '<Location />\n(?:  .*\n)*?</Location>'
+    replace: "<Location />\n  Order allow,deny\n{{ printer_allow_from | map('regex_replace', '^', '  Allow from ') | join('\n') }}\n</Location>"
+  notify: Restart cups
+  become: true
+
+- name: Enable cups and avahi
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - cups
+    - avahi-daemon
+  become: true
+
+- name: Apply the CUPS settings now
+  ansible.builtin.meta: flush_handlers
+
+- name: Check for the print queue
+  ansible.builtin.command: lpstat -v {{ printer_queue }}
+  register: printer_lpstat
+  changed_when: false
+  failed_when: false
+
+- name: Find the printer on USB
+  ansible.builtin.shell: >
+    set -o pipefail;
+    lpinfo -v | awk '{print $2}' | grep -m1 -F '{{ printer_usb_uri_prefix }}'
+  args:
+    executable: /bin/bash
+  register: printer_usb_uri
+  changed_when: false
+  failed_when: printer_usb_uri.stdout == ''
+  when: printer_lpstat.rc != 0
+  become: true
+
+- name: Add the print queue
+  ansible.builtin.command: >
+    lpadmin -p {{ printer_queue }} -E -v {{ printer_usb_uri.stdout }} -m {{ printer_ppd }}
+    -L {{ inventory_hostname }} -o printer-is-shared=true
+  when: printer_lpstat.rc != 0
+  changed_when: true
+  become: true
+
+- name: Read the queue options
+  ansible.builtin.command: lpoptions -p {{ printer_queue }}
+  register: printer_options
+  changed_when: false
+
+- name: Share the queue
+  ansible.builtin.command: lpadmin -p {{ printer_queue }} -o printer-is-shared=true
+  when: "'printer-is-shared=true' not in printer_options.stdout"
+  changed_when: true
+  become: true
+
+# Rules are stored even while ufw is off, so they apply once the firewall role enables it.
+- name: Allow IPP from the LAN
+  community.general.ufw:
+    rule: allow
+    port: '631'
+    proto: tcp
+    from_ip: "{{ printer_lan_cidr }}"
+    comment: CUPS printing
+  become: true
+
+- name: Allow mDNS from the LAN
+  community.general.ufw:
+    rule: allow
+    port: '5353'
+    proto: udp
+    from_ip: "{{ printer_lan_cidr }}"
+    comment: mDNS (printer discovery)
+  become: true
+
+- name: Next steps (manual)
+  ansible.builtin.debug:
+    msg:
+      - "Test page: lp -d {{ printer_queue }} /usr/share/cups/data/testprint"
+      - "Check the share: ippfind -T 5 (should list ipp://{{ inventory_hostname }}.local:631/printers/{{ printer_queue }})"
+      - "LAN: Windows (Add device), iPhone, Android, Linux find '<printer description> @ {{ inventory_hostname }}' automatically."
+      - "Tailscale (outside the house, no auto-discovery): add ipp://<odin MagicDNS name>:631/printers/{{ printer_queue }}"
