@@ -24,6 +24,7 @@
     - { role: obsidian, tags: obsidian }
     - { role: claude_code, tags: claude_code }
     - { role: test_vm, tags: test_vm }
+    - { role: git, tags: git }  # last: after roles that clone over HTTPS
     # Available but not on odin:
     # - { role: conda, tags: conda }          # replaced by uv
     # - { role: ibkr_tws, tags: ibkr_tws }    # trading runs on frigg

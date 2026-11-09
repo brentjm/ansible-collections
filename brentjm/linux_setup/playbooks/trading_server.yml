@@ -17,3 +17,5 @@
       tags: claude_code
     - role: neovim
       tags: neovim
+    - role: git
+      tags: git

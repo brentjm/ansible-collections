@@ -1,0 +1,14 @@
+---
+# Use SSH for every GitHub URL. Keep this role after any role that clones over
+# HTTPS on a fresh machine (neovim): the key must exist before the rewrite works.
+- name: Install git
+  ansible.builtin.apt:
+    name: git
+    state: present
+  become: true
+
+- name: Use SSH for GitHub
+  community.general.git_config:
+    name: url.git@github.com:.insteadOf
+    value: https://github.com/
+    scope: global
