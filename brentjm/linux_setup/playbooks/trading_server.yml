@@ -15,6 +15,8 @@
       tags: firewall
     - role: claude_code
       tags: claude_code
+    - role: tree_sitter
+      tags: tree_sitter
     - role: neovim
       tags: neovim
     - role: git

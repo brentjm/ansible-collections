@@ -1,0 +1,24 @@
+---
+- name: Download the tree-sitter CLI
+  ansible.builtin.get_url:
+    url: "{{ tree_sitter_url }}"
+    dest: "/usr/local/src/tree-sitter-{{ tree_sitter_version }}.gz"
+    checksum: "sha256:{{ tree_sitter_sha256 }}"
+    mode: '0644'
+  become: true
+
+- name: Unpack it
+  ansible.builtin.shell: >
+    gzip --decompress --stdout /usr/local/src/tree-sitter-{{ tree_sitter_version }}.gz
+    > /usr/local/bin/tree-sitter-{{ tree_sitter_version }} &&
+    chmod 0755 /usr/local/bin/tree-sitter-{{ tree_sitter_version }}
+  args:
+    creates: "/usr/local/bin/tree-sitter-{{ tree_sitter_version }}"
+  become: true
+
+- name: Point tree-sitter at this version
+  ansible.builtin.file:
+    src: "/usr/local/bin/tree-sitter-{{ tree_sitter_version }}"
+    dest: /usr/local/bin/tree-sitter
+    state: link
+  become: true

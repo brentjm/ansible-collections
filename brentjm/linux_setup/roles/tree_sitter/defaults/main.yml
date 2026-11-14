@@ -1,0 +1,7 @@
+---
+# tree-sitter CLI for nvim-treesitter (main branch): 0.26.1 or later, from the official release,
+# NOT npm/Volta (Volta's shim fails inside grammar folders whose package.json lists tree-sitter-cli).
+# The Ubuntu package is too old (0.25.9 on 26.04).
+tree_sitter_version: "0.27.2"
+tree_sitter_sha256: 7ed56d152c52437397b9fcaa43cf341f49933cecc1ca291843f0d347c6e2cb3a  # tree-sitter-linux-x64.gz (GitHub asset digest)
+tree_sitter_url: "https://github.com/tree-sitter/tree-sitter/releases/download/v{{ tree_sitter_version }}/tree-sitter-linux-x64.gz"

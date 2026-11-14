@@ -1,5 +1,7 @@
 ---
-- name: Install tree-sitter-cli globally with Volta
+# tree-sitter-cli moved to the tree_sitter role (official binary): Volta's shim breaks
+# nvim-treesitter's parser builds. Remove the old Volta copy.
+- name: Remove tree-sitter-cli from Volta
   ansible.builtin.command:
-    cmd: /home/{{ username }}/.volta/bin/volta install tree-sitter-cli
-    creates: /home/{{ username }}/.volta/tools/image/packages/tree-sitter-cli
+    cmd: /home/{{ username }}/.volta/bin/volta uninstall tree-sitter-cli
+    removes: /home/{{ username }}/.volta/tools/image/packages/tree-sitter-cli

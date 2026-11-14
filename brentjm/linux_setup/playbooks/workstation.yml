@@ -11,6 +11,7 @@
     - { role: firewall, tags: firewall }
     - { role: snaps, tags: snaps }
     - { role: nodejs, tags: nodejs }
+    - { role: tree_sitter, tags: tree_sitter }
     - { role: neovim, tags: neovim }
     - { role: go, tags: go }
     - { role: dotnet, tags: dotnet }
