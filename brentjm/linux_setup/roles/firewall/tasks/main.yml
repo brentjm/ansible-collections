@@ -1,8 +1,19 @@
 ---
-- name: Allow SSH
+# Other roles store their own ufw rules (printer, home_assistant); run this role after them,
+# because it turns ufw on with incoming denied. Rules are stored even while ufw is off.
+- name: List ufw application profiles
+  ansible.builtin.command: ufw app list
+  register: firewall_apps
+  changed_when: false
+  check_mode: false
+  become: true
+
+# odin has no SSH server, so no OpenSSH profile; frigg does.
+- name: Allow SSH (if an SSH server is installed)
   community.general.ufw:
     rule: allow
     name: OpenSSH
+  when: "'OpenSSH' in firewall_apps.stdout"
   become: true
 
 - name: Enable UFW (deny incoming by default)

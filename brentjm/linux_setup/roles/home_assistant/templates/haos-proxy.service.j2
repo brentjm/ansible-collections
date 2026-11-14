@@ -1,0 +1,12 @@
+[Unit]
+Description=Forward port {{ home_assistant_port }} to the Home Assistant VM
+Requires=haos-proxy.socket
+After=network.target
+
+[Service]
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd {{ home_assistant_ip }}:{{ home_assistant_port }}
+DynamicUser=yes
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes

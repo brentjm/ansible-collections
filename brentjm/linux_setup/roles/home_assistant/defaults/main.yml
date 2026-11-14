@@ -1,0 +1,16 @@
+---
+# Home Assistant OS in a KVM virtual machine (libvirt). See docs/home_assistant.md.
+# Pinned to a release that publishes a qcow2 image; Home Assistant updates itself after first boot.
+home_assistant_version: "18.4"
+home_assistant_sha256: 756ec485b1b153099ca53e88a5eebd63a801d56b791afe5c6d63ef94a35dc02d  # the .qcow2.xz (GitHub asset digest)
+home_assistant_url: "https://github.com/home-assistant/operating-system/releases/download/{{ home_assistant_version }}/haos_ova-{{ home_assistant_version }}.qcow2.xz"
+home_assistant_name: haos
+home_assistant_vcpus: 2
+home_assistant_ram_mb: 4096
+home_assistant_images_dir: /var/lib/libvirt/images
+# Fixed MAC + reserved address on libvirt's default NAT network (192.168.122.0/24).
+home_assistant_mac: "52:54:00:48:41:4f"
+home_assistant_ip: 192.168.122.10
+# Web page (port 8123) is proxied by odin to these networks only (ufw): the LAN and the tailnet.
+home_assistant_port: 8123
+home_assistant_lan: 192.168.68.0/22

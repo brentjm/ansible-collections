@@ -17,3 +17,4 @@ message brokers, home automation, ...etc.
 - [testing in a KVM VM](testing.md)
 - [Obsidian in a browser (phone view)](obsidian_web.md)
 - [printer server](printer.md)
+- [Home Assistant (VM on odin)](home_assistant.md)

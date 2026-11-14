@@ -1,0 +1,8 @@
+[Unit]
+Description=Home Assistant web page (port {{ home_assistant_port }}) on odin, forwarded to the VM
+
+[Socket]
+ListenStream={{ home_assistant_port }}
+
+[Install]
+WantedBy=sockets.target

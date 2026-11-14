@@ -1,0 +1,9 @@
+---
+# Home Assistant OS as a KVM virtual machine on odin, for the house (kitchen dashboard, lists, calendar).
+# Run one part with --tags home_assistant. Test first on the test VM (docs/home_assistant.md).
+- name: Home Assistant (virtual machine on odin)
+  hosts: home_servers
+  gather_facts: true
+  roles:
+    - { role: home_assistant, tags: home_assistant }
+    - { role: firewall, tags: firewall }  # last: turns ufw on after the rules above are stored

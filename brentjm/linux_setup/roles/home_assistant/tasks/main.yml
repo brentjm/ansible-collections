@@ -1,0 +1,154 @@
+---
+# Needs a CPU with virtualization (KVM). The VM sits on libvirt's NAT network, so odin does not
+# change its own network; odin forwards only the web page (port 8123) to the LAN and tailnet.
+# The user is NOT added to the libvirt group (that group is root-equivalent); virsh runs with become.
+- name: Install KVM and libvirt packages
+  ansible.builtin.apt:
+    pkg:
+      - qemu-system-x86
+      - libvirt-daemon-system
+      - libvirt-clients
+      - virtinst
+      - ovmf
+      - xz-utils
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
+- name: Read the libvirt default network
+  ansible.builtin.command: virsh net-info default
+  register: home_assistant_net
+  changed_when: false
+  become: true
+
+- name: Start the default network
+  ansible.builtin.command: virsh net-start default
+  when: home_assistant_net.stdout is not search('Active:\s+yes')
+  changed_when: true
+  become: true
+
+- name: Start the default network at boot
+  ansible.builtin.command: virsh net-autostart default
+  when: home_assistant_net.stdout is not search('Autostart:\s+yes')
+  changed_when: true
+  become: true
+
+- name: Read the network's reserved addresses
+  ansible.builtin.command: virsh net-dumpxml default
+  register: home_assistant_net_xml
+  changed_when: false
+  become: true
+
+- name: Reserve the VM's address
+  ansible.builtin.command: >
+    virsh net-update default add ip-dhcp-host
+    "<host mac='{{ home_assistant_mac }}' name='{{ home_assistant_name }}' ip='{{ home_assistant_ip }}'/>"
+    --live --config
+  when: home_assistant_mac not in home_assistant_net_xml.stdout
+  changed_when: true
+  become: true
+
+- name: Check whether the VM exists
+  ansible.builtin.command: virsh dominfo {{ home_assistant_name }}
+  register: home_assistant_dom
+  changed_when: false
+  failed_when: false
+  become: true
+
+# The image only creates the VM; after that Home Assistant OS updates itself inside the VM.
+- name: Download the Home Assistant OS image
+  ansible.builtin.get_url:
+    url: "{{ home_assistant_url }}"
+    dest: "{{ home_assistant_images_dir }}/haos_ova-{{ home_assistant_version }}.qcow2.xz"
+    checksum: "sha256:{{ home_assistant_sha256 }}"
+    mode: '0600'
+  when: home_assistant_dom.rc != 0
+  become: true
+
+- name: Unpack the disk image
+  ansible.builtin.shell: >
+    xz --decompress --stdout haos_ova-{{ home_assistant_version }}.qcow2.xz > {{ home_assistant_name }}.qcow2
+  args:
+    chdir: "{{ home_assistant_images_dir }}"
+    creates: "{{ home_assistant_images_dir }}/{{ home_assistant_name }}.qcow2"
+  when: home_assistant_dom.rc != 0
+  become: true
+
+- name: Create and start the VM
+  ansible.builtin.command: >
+    virt-install --name {{ home_assistant_name }} --description "Home Assistant OS"
+    --os-variant generic --memory {{ home_assistant_ram_mb }} --vcpus {{ home_assistant_vcpus }}
+    --import --boot uefi
+    --disk path={{ home_assistant_images_dir }}/{{ home_assistant_name }}.qcow2,bus=scsi
+    --controller type=scsi,model=virtio-scsi
+    --network network=default,model=virtio,mac={{ home_assistant_mac }}
+    --channel unix,target.type=virtio,name=org.qemu.guest_agent.0
+    --graphics none --noautoconsole --autostart
+  when: home_assistant_dom.rc != 0
+  changed_when: true
+  become: true
+
+- name: Install the web page forwarder
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: '0644'
+  loop:
+    - haos-proxy.socket
+    - haos-proxy.service
+  become: true
+  register: home_assistant_proxy_units
+
+- name: Enable the web page forwarder
+  ansible.builtin.systemd:
+    name: haos-proxy.socket
+    enabled: true
+    state: started
+    daemon_reload: "{{ home_assistant_proxy_units.changed }}"
+  become: true
+
+# ufw rules are stored even if ufw is off, so they take effect when it is enabled.
+- name: Allow the web page from the LAN
+  community.general.ufw:
+    rule: allow
+    port: "{{ home_assistant_port | string }}"
+    proto: tcp
+    src: "{{ home_assistant_lan }}"
+  become: true
+
+- name: Allow the web page from the tailnet
+  community.general.ufw:
+    rule: allow
+    port: "{{ home_assistant_port | string }}"
+    proto: tcp
+    interface: tailscale0
+    direction: in
+  become: true
+
+# The VM may ask odin only for an address and DNS; nothing else on odin is reachable from it.
+- name: Allow the VM's DHCP and DNS requests
+  community.general.ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    interface: virbr0
+    direction: in
+  loop:
+    - { port: '67', proto: udp }
+    - { port: '53', proto: udp }
+    - { port: '53', proto: tcp }
+  become: true
+
+- name: Let the VM reach the internet and the LAN (NAT)
+  community.general.ufw:
+    rule: allow
+    route: true
+    interface_in: virbr0
+    interface_out: "{{ ansible_facts['default_ipv4']['interface'] }}"
+  become: true
+
+- name: Next step (manual)
+  ansible.builtin.debug:
+    msg: >-
+      First boot takes a few minutes. Then open http://{{ ansible_facts['default_ipv4']['address'] }}:{{ home_assistant_port }}
+      (or http://{{ home_assistant_ip }}:{{ home_assistant_port }} from odin) and create the admin account.
