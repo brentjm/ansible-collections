@@ -88,41 +88,62 @@
   changed_when: true
   become: true
 
-- name: Install the web page forwarder
+# Replaces the first version, which forwarded only 8123 (haos-proxy.socket).
+- name: Stop the old web page forwarder
+  ansible.builtin.systemd:
+    name: haos-proxy.socket
+    enabled: false
+    state: stopped
+  failed_when: false
+  become: true
+
+- name: Remove the old forwarder files
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ item }}"
+    state: absent
+  loop:
+    - haos-proxy.socket
+    - haos-proxy.service
+  become: true
+
+- name: Install the web page forwarder (one instance per port)
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/etc/systemd/system/{{ item }}"
     mode: '0644'
   loop:
-    - haos-proxy.socket
-    - haos-proxy.service
+    - haos-proxy@.socket
+    - haos-proxy@.service
   become: true
   register: home_assistant_proxy_units
 
 - name: Enable the web page forwarder
   ansible.builtin.systemd:
-    name: haos-proxy.socket
+    name: "haos-proxy@{{ item }}.socket"
     enabled: true
     state: started
     daemon_reload: "{{ home_assistant_proxy_units.changed }}"
+  loop: "{{ home_assistant_ports }}"
   become: true
 
 # ufw rules are stored even if ufw is off, so they take effect when it is enabled.
 - name: Allow the web page from the LAN
   community.general.ufw:
     rule: allow
-    port: "{{ home_assistant_port | string }}"
+    port: "{{ item | string }}"
     proto: tcp
     src: "{{ home_assistant_lan }}"
+  loop: "{{ home_assistant_ports }}"
   become: true
 
 - name: Allow the web page from the tailnet
   community.general.ufw:
     rule: allow
-    port: "{{ home_assistant_port | string }}"
+    port: "{{ item | string }}"
     proto: tcp
     interface: tailscale0
     direction: in
+  loop: "{{ home_assistant_ports }}"
   become: true
 
 # The VM may ask odin only for an address and DNS; nothing else on odin is reachable from it.
@@ -150,5 +171,5 @@
 - name: Next step (manual)
   ansible.builtin.debug:
     msg: >-
-      First boot takes a few minutes. Then open http://{{ ansible_facts['default_ipv4']['address'] }}:{{ home_assistant_port }}
-      (or http://{{ home_assistant_ip }}:{{ home_assistant_port }} from odin) and create the admin account.
+      First boot takes a few minutes. Then open http://{{ ansible_facts['default_ipv4']['address'] }}/
+      (or http://{{ home_assistant_ip }}/ from odin) and create the admin account.

@@ -11,6 +11,7 @@ home_assistant_images_dir: /var/lib/libvirt/images
 # Fixed MAC + reserved address on libvirt's default NAT network (192.168.122.0/24).
 home_assistant_mac: "52:54:00:48:41:4f"
 home_assistant_ip: 192.168.122.10
-# Web page (port 8123) is proxied by odin to these networks only (ufw): the LAN and the tailnet.
-home_assistant_port: 8123
+# Web page: odin forwards these ports to the VM, allowed from the LAN and the tailnet only (ufw).
+# HAOS 18.4 redirects port 8123 to port 80, so both are needed.
+home_assistant_ports: [80, 8123]
 home_assistant_lan: 192.168.68.0/22
