@@ -1,6 +1,9 @@
 ---
+# Tailscale is host infrastructure shared by home_assistant, printer and obsidian_web: install it
+# here, once. Then run `sudo tailscale up` on the host and approve the printed URL.
 - name: Configure Ubuntu home server
   hosts: home_servers
   gather_facts: true
   roles:
     - role: server
+    - { role: tailscale, tags: tailscale }

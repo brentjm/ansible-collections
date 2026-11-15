@@ -54,6 +54,16 @@
     pull: missing
   become: true
 
+- name: Allow the Obsidian web port on Tailscale only
+  community.general.ufw:
+    rule: allow
+    port: "{{ obsidian_web_tailscale_port | string }}"
+    proto: tcp
+    interface: tailscale0
+    direction: in
+    comment: Obsidian web over the tailnet
+  become: true
+
 - name: Check Tailscale login
   ansible.builtin.command: tailscale status --json
   register: obsidian_web_ts

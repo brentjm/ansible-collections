@@ -1,7 +1,7 @@
 # Obsidian in a browser (odin)
 
 Runs the real Obsidian (Dataview, Tasks) in a container and shows it in a browser, so the
-phone can see the vault's summaries. `playbooks/obsidian_web.yml`: roles `docker`, `tailscale`, `obsidian_web`.
+phone can see the vault's summaries. `playbooks/obsidian_web.yml`: roles `docker`, `obsidian_web`; install Tailscale first with `playbooks/server.yml --tags tailscale`. `obsidian_web` opens its port on `tailscale0` only.
 
 ```bash
 ansible-playbook playbooks/obsidian_web.yml --ask-become-pass
