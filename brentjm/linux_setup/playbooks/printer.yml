@@ -1,6 +1,5 @@
 ---
-# HP LaserJet P1102w (USB on odin) shared to the house by CUPS. Printing from outside needs
-# Tailscale: run playbooks/server.yml --tags tailscale first (this role opens 631 on tailscale0).
+# HP LaserJet P1102w (USB on odin) shared to the house by CUPS (LAN only; no printing over Tailscale).
 - name: Printer server
   hosts: home_servers
   gather_facts: true

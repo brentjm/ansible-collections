@@ -202,16 +202,6 @@
     comment: CUPS printing
   become: true
 
-- name: Allow IPP over Tailscale (printing from outside)
-  community.general.ufw:
-    rule: allow
-    port: '631'
-    proto: tcp
-    interface: tailscale0
-    direction: in
-    comment: CUPS printing over the tailnet
-  become: true
-
 - name: Allow mDNS from the LAN
   community.general.ufw:
     rule: allow

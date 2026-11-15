@@ -1,7 +1,6 @@
 # Printer server (odin)
 
-Shares the HP LaserJet P1102w (USB on odin) to the house with CUPS. `playbooks/printer.yml`: role `printer`
-(Tailscale for printing from outside: `playbooks/server.yml --tags tailscale`).
+Shares the HP LaserJet P1102w (USB on odin) to the house with CUPS. `playbooks/printer.yml`: role `printer`.
 
 ```bash
 ansible-playbook playbooks/printer.yml --ask-become-pass
@@ -21,8 +20,7 @@ lp -d HP-LaserJet-Professional-P-1102w /usr/share/cups/data/testprint   # test p
   `@LOCAL` alone does not cover tailnet peers: `tailscale0` carries a /32.
 - Queue `HP-LaserJet-Professional-P-1102w`, `hp:/usb/...` URI, PPD `drv:///hpcups.drv/hp-laserjet_professional_p_1102w.ppd`,
   shared. Created only if missing.
-- ufw: 631/tcp and 5353/udp from `192.168.68.0/22`. Stored even while ufw is off; `tailscale0` gets 631/tcp from this role
-  (the `tailscale` role opens nothing).
+- ufw: 631/tcp and 5353/udp from `192.168.68.0/22`. Stored even while ufw is off; `tailscale0` is not opened (no printing from outside).
 
 ## Clients
 Advertised by DNS-SD (with the AirPrint `_universal` subtype) as
