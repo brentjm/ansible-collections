@@ -22,6 +22,17 @@
     update_cache: true
   become: true
 
+# Ubuntu's default unattended-upgrades only trusts Ubuntu's own repositories; without this,
+# Tailscale security fixes would need a manual apt upgrade. Check: sudo unattended-upgrade --dry-run -d
+- name: Install Tailscale updates automatically
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/52unattended-upgrades-tailscale
+    content: |
+      // Managed by Ansible. Install Tailscale updates automatically.
+      Unattended-Upgrade::Origins-Pattern:: "origin=Tailscale";
+    mode: '0644'
+  become: true
+
 - name: Enable and start tailscaled
   ansible.builtin.systemd:
     name: tailscaled
