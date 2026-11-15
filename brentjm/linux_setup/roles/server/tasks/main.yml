@@ -12,9 +12,6 @@
 # - name: Install Portainer
 #   ansible.builtin.include_tasks: portainer.yml
 #
-# - name: Install Home Assistant
-#   ansible.builtin.include_tasks: ha.yml
-#
 # - name: Install Plex
 #   ansible.builtin.include_tasks: plex.yml
 #
