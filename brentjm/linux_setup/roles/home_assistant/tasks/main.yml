@@ -1,6 +1,6 @@
 ---
 # Needs a CPU with virtualization (KVM). The VM sits on libvirt's NAT network, so odin does not
-# change its own network; odin forwards only the web page (port 8123) to the LAN and tailnet.
+# change its own network; odin forwards only the web page (port 80) to the LAN and tailnet.
 # The user is NOT added to the libvirt group (that group is root-equivalent); virsh runs with become.
 - name: Install KVM and libvirt packages
   ansible.builtin.apt:
@@ -126,6 +126,23 @@
   loop: "{{ home_assistant_ports }}"
   become: true
 
+- name: Stop forwarders for retired ports
+  ansible.builtin.systemd:
+    name: "haos-proxy@{{ item }}.socket"
+    enabled: false
+    state: stopped
+  loop: "{{ home_assistant_retired_ports }}"
+  failed_when: false
+  become: true
+
+- name: Stop the retired forwarder services
+  ansible.builtin.systemd:
+    name: "haos-proxy@{{ item }}.service"
+    state: stopped
+  loop: "{{ home_assistant_retired_ports }}"
+  failed_when: false
+  become: true
+
 # ufw rules are stored even if ufw is off, so they take effect when it is enabled.
 - name: Allow the web page from the LAN
   community.general.ufw:
@@ -144,6 +161,27 @@
     interface: tailscale0
     direction: in
   loop: "{{ home_assistant_ports }}"
+  become: true
+
+- name: Remove ufw rules for retired ports (LAN)
+  community.general.ufw:
+    rule: allow
+    port: "{{ item | string }}"
+    proto: tcp
+    src: "{{ home_assistant_lan }}"
+    delete: true
+  loop: "{{ home_assistant_retired_ports }}"
+  become: true
+
+- name: Remove ufw rules for retired ports (tailnet)
+  community.general.ufw:
+    rule: allow
+    port: "{{ item | string }}"
+    proto: tcp
+    interface: tailscale0
+    direction: in
+    delete: true
+  loop: "{{ home_assistant_retired_ports }}"
   become: true
 
 # The VM may ask odin only for an address and DNS; nothing else on odin is reachable from it.
